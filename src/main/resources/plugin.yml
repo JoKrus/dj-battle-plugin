@@ -1,0 +1,34 @@
+name: BattlePlugin
+version: '${project.version}'
+main: net.jcom.minecraft.battleplugin.BattlePlugin
+api-version: '1.20'
+load: STARTUP
+commands:
+  battle:
+    usage: /<command>
+    aliases: [ ]
+    description: Music-Command
+    permission: battleplugin.battle
+
+permissions:
+  battleplugin.*:
+    default: op
+    description: OP-Permission for everything
+    children:
+      battleplugin.battle.*: true
+
+  battleplugin.battle.*:
+    default: op
+    description: Battle-Management | Permission
+    children:
+      start: true
+      stop: true
+
+  battleplugin.battle.start:
+    default: op
+    description: Permission to start the battle | Permission
+
+  battleplugin.battle.stop:
+    default: op
+    description: Permission to stop the battle | Permission
+
