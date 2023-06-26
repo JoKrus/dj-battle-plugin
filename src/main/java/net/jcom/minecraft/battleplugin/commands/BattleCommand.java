@@ -1,6 +1,7 @@
 package net.jcom.minecraft.battleplugin.commands;
 
 import net.jcom.minecraft.battleplugin.data.IsBattleGoingOn;
+import org.bukkit.Bukkit;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
@@ -20,13 +21,15 @@ public class BattleCommand implements CommandExecutor {
                     return false;
                 }
                 IsBattleGoingOn.saveData(true);
+                Bukkit.broadcastMessage("Battle has started!");
             }
             case "stop" -> {
                 if (!IsBattleGoingOn.loadData()) {
-                    sender.sendMessage("No battle present right now");
+                    sender.sendMessage("No battle present right now.");
                     return false;
                 }
                 IsBattleGoingOn.saveData(false);
+                Bukkit.broadcastMessage("Battle was stopped!");
             }
         }
 
