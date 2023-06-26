@@ -7,6 +7,8 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerCommandPreprocessEvent;
 import org.bukkit.plugin.Plugin;
 
+import java.util.List;
+
 public class PlayerCommandSendHandler implements Listener {
     public PlayerCommandSendHandler(Plugin plugin) {
         Bukkit.getPluginManager().registerEvents(this, plugin);
@@ -14,14 +16,33 @@ public class PlayerCommandSendHandler implements Listener {
 
     @EventHandler
     public void onCommandSend(PlayerCommandPreprocessEvent playerCommandPreprocessEvent) {
+        String cmd = playerCommandPreprocessEvent.getMessage().substring(1);
         if (IsBattleGoingOn.loadData()) {
-            String cmd = playerCommandPreprocessEvent.getMessage().substring(1);
             if (!cmd.startsWith("battle stop")) {
                 playerCommandPreprocessEvent.setCancelled(true);
                 playerCommandPreprocessEvent.getPlayer().sendMessage(playerCommandPreprocessEvent.getMessage()
                         + " was stopped because a battle is going on.");
                 Bukkit.getLogger().info(cmd + " was stopped because a battle is going on.");
             }
+        } else {
+            var forbiddenStrings = List.of("warp");
+
+            if (!playerCommandPreprocessEvent.getPlayer().isOp()) {
+                if (stringInList(forbiddenStrings, cmd.split(" ")[0])) {
+                    playerCommandPreprocessEvent.setCancelled(true);
+                    playerCommandPreprocessEvent.getPlayer().sendMessage(playerCommandPreprocessEvent.getMessage()
+                            + " was stopped because it contains forbidden command words.");
+                    Bukkit.getLogger().info(cmd + " was stopped because it contains forbidden command words.");
+                }
+            }
         }
     }
+
+    private static boolean stringInList(List<String> stringList, String s) {
+        for (var sFromList : stringList) {
+            if (sFromList.contains(s)) return true;
+        }
+        return false;
+    }
+
 }
