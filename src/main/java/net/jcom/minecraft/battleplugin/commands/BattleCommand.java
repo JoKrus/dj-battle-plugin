@@ -6,6 +6,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
+import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitRunnable;
 
 import java.util.List;
@@ -26,8 +27,6 @@ public class BattleCommand implements CommandExecutor {
                 }
                 IsBattleGoingOn.saveData(true);
 
-                Bukkit.getServer().dispatchCommand(Bukkit.getConsoleSender(), "effect give @a minecraft:saturation infinite 100 true");
-
                 new BukkitRunnable() {
                     @Override
                     public void run() {
@@ -38,12 +37,19 @@ public class BattleCommand implements CommandExecutor {
                                 "difficulty normal",
                                 "gamemode survival @a",
                                 "weather clear",
-                                "effect clear @a"
+                                "effect clear @a",
+                                "clear @a"
                         );
 
                         Bukkit.getScheduler().runTask(BattlePlugin.getPlugin(), () -> {
                             for (var cmd : cmds) {
                                 Bukkit.getServer().dispatchCommand(Bukkit.getConsoleSender(), cmd);
+                            }
+
+                            for (var p : Bukkit.getOnlinePlayers().toArray(new Player[0])) {
+                                p.setSaturation(5);
+                                p.setFoodLevel(20);
+                                p.setHealth(20);
                             }
                         });
                         Bukkit.broadcastMessage("Battle has started!");
