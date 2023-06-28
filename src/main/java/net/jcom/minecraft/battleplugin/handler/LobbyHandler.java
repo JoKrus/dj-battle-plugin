@@ -13,6 +13,7 @@ import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.entity.FoodLevelChangeEvent;
 import org.bukkit.event.entity.PlayerDeathEvent;
 import org.bukkit.event.player.PlayerInteractEntityEvent;
+import org.bukkit.event.player.PlayerUnleashEntityEvent;
 import org.bukkit.plugin.Plugin;
 import org.spigotmc.event.entity.EntityMountEvent;
 
@@ -91,6 +92,13 @@ public class LobbyHandler implements Listener {
             if (e.getRightClicked().getType().equals(EntityType.ITEM_FRAME)) {
                 e.setCancelled(true);
             }
+        }
+    }
+
+    @EventHandler
+    public void onUnleash(PlayerUnleashEntityEvent e) {
+        if (e.getPlayer().getGameMode() == GameMode.ADVENTURE) {
+            e.setCancelled(true);
         }
     }
 }
