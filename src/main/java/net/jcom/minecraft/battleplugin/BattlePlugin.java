@@ -13,10 +13,22 @@ public final class BattlePlugin extends JavaPlugin {
 
     private static BattlePlugin plugin;
 
-
     @Override
     public void onEnable() {
         plugin = this;
+
+        getConfig().addDefault(Defaults.GRACE_PERIOD_KEY, Defaults.GRACE_PERIOD_VALUE);
+        getConfig().addDefault(Defaults.BATTLE_START_KEY, Defaults.BATTLE_START_VALUE);
+        getConfig().addDefault(Defaults.BATTLE_DURATION_KEY, Defaults.BATTLE_DURATION_VALUE);
+        getConfig().addDefault(Defaults.BATTLE_LOCATION_KEY, Defaults.BATTLE_LOCATION_VALUE);
+        getConfig().addDefault(Defaults.LOBBY_LOCATION_KEY, Defaults.LOBBY_LOCATION_VALUE);
+        getConfig().addDefault(Defaults.WORLD_BORDER_INIT_WIDTH_KEY, Defaults.WORLD_BORDER_INIT_WIDTH_VALUE);
+        getConfig().addDefault(Defaults.WORLD_BORDER_END_WIDTH_KEY, Defaults.WORLD_BORDER_END_WIDTH_VALUE);
+        getConfig().addDefault(Defaults.WORLD_BORDER_LOBBY_WIDTH_KEY, Defaults.WORLD_BORDER_LOBBY_WIDTH_VALUE);
+
+
+        getConfig().options().copyDefaults(true);
+        saveConfig();
 
         // Plugin startup logic
         Bukkit.getLogger().info("BattlePlugin - started!");

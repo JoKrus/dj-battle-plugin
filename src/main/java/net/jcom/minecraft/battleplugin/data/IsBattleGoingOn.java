@@ -5,7 +5,6 @@ import org.bukkit.Bukkit;
 import org.bukkit.util.io.BukkitObjectInputStream;
 import org.bukkit.util.io.BukkitObjectOutputStream;
 
-import javax.xml.crypto.Data;
 import java.io.*;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.zip.GZIPInputStream;
@@ -13,16 +12,18 @@ import java.util.zip.GZIPOutputStream;
 
 public class IsBattleGoingOn implements Serializable {
     @Serial
-    private static final long serialVersionUID = -1681014706529286330L;
+    private static final long serialVersionUID = -1681014706529286334L;
 
     public static final String BATTLE_PATH =
             BattlePlugin.getPlugin().getDataFolder().getAbsolutePath() + File.separator +
                     "IsBattleGoing.data";
 
-    public final AtomicBoolean atomicBoolean;
+    public final AtomicBoolean isGoing;
+    public final AtomicBoolean isTimer;
 
-    private IsBattleGoingOn(boolean isBattleGoingOn) {
-        this.atomicBoolean = new AtomicBoolean(isBattleGoingOn);
+    private IsBattleGoingOn(boolean isBattleGoingOn, boolean isTimer) {
+        this.isGoing = new AtomicBoolean(isBattleGoingOn);
+        this.isTimer = new AtomicBoolean(isTimer);
     }
 
     public static void init() {
@@ -31,13 +32,13 @@ public class IsBattleGoingOn implements Serializable {
             folder.mkdirs();
         }
         if (!new File(BATTLE_PATH).exists()) {
-            IsBattleGoingOn.saveData(false);
+            IsBattleGoingOn.saveData(false, false);
         }
     }
 
-    public static boolean saveData(boolean toSave) {
+    public static boolean saveData(boolean toSave, boolean isTimer) {
         try {
-            IsBattleGoingOn isb = new IsBattleGoingOn(toSave);
+            IsBattleGoingOn isb = new IsBattleGoingOn(toSave, isTimer);
 
             BukkitObjectOutputStream out = new BukkitObjectOutputStream(new GZIPOutputStream(new FileOutputStream(BATTLE_PATH)));
             out.writeObject(isb);
@@ -49,15 +50,19 @@ public class IsBattleGoingOn implements Serializable {
         }
     }
 
-    public static boolean loadData() {
+    public static IsBattleGoingOn loadDataWithTimer() {
         try {
             BukkitObjectInputStream in = new BukkitObjectInputStream(new GZIPInputStream(new FileInputStream(BATTLE_PATH)));
             IsBattleGoingOn data = (IsBattleGoingOn) in.readObject();
             in.close();
-            return data.atomicBoolean.get();
+            return data;
         } catch (ClassNotFoundException | IOException e) {
             Bukkit.getLogger().info("Reading went wrong, so returning false");
-            return false;
+            return new IsBattleGoingOn(false, false);
         }
+    }
+
+    public static boolean loadData() {
+        return loadDataWithTimer().isGoing.get();
     }
 }

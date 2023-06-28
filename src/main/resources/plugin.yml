@@ -7,7 +7,7 @@ commands:
   battle:
     usage: /<command>
     aliases: [ ]
-    description: Music-Command
+    description: Battle-Command
     permission: battleplugin.battle
 
 permissions:
@@ -23,6 +23,8 @@ permissions:
     children:
       start: true
       stop: true
+      reload: true
+      init: true
 
   battleplugin.battle.start:
     default: op
@@ -32,3 +34,10 @@ permissions:
     default: op
     description: Permission to stop the battle | Permission
 
+  battleplugin.battle.reload:
+    default: op
+    description: Permission to reload the config | Permission
+
+  battleplugin.battle.init:
+    default: op
+    description: Permission to initialize a battle world from config | Permission
