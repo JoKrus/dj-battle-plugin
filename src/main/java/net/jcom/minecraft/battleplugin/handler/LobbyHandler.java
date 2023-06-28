@@ -11,7 +11,6 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.entity.FoodLevelChangeEvent;
-import org.bukkit.event.entity.PlayerDeathEvent;
 import org.bukkit.event.player.PlayerInteractEntityEvent;
 import org.bukkit.event.player.PlayerUnleashEntityEvent;
 import org.bukkit.plugin.Plugin;
@@ -23,10 +22,6 @@ public class LobbyHandler implements Listener {
         Bukkit.getPluginManager().registerEvents(this, plugin);
     }
 
-    @EventHandler
-    public void onPlayerDeath(PlayerDeathEvent playerDeathEvent) {
-        playerDeathEvent.getEntity().setGameMode(GameMode.ADVENTURE);
-    }
 
     @EventHandler
     public void onPlayerDamaged(EntityDamageEvent entityDamageEvent) {

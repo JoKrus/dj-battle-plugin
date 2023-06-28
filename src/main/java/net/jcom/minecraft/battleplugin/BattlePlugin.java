@@ -3,6 +3,7 @@ package net.jcom.minecraft.battleplugin;
 import net.jcom.minecraft.battleplugin.commands.BattleCommand;
 import net.jcom.minecraft.battleplugin.commands.tab.BattleTabComplete;
 import net.jcom.minecraft.battleplugin.data.IsBattleGoingOn;
+import net.jcom.minecraft.battleplugin.handler.BattleHandler;
 import net.jcom.minecraft.battleplugin.handler.LobbyHandler;
 import net.jcom.minecraft.battleplugin.handler.PlayerCommandSendHandler;
 import net.jcom.minecraft.battleplugin.handler.PreventBedHandler;
@@ -41,8 +42,7 @@ public final class BattlePlugin extends JavaPlugin {
         new LobbyHandler(this);
         new PlayerCommandSendHandler(this);
         new PreventBedHandler(this);
-        // Only for debug
-        // new BattleHandler(this);
+        new BattleHandler(this);
     }
 
     @Override
