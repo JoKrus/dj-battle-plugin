@@ -2,11 +2,13 @@ package net.jcom.minecraft.battleplugin.commands;
 
 import net.jcom.minecraft.battleplugin.BattlePlugin;
 import net.jcom.minecraft.battleplugin.data.IsBattleGoingOn;
+import net.jcom.minecraft.battleplugin.handler.GracePeriodHandler;
 import org.bukkit.Bukkit;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
+import org.bukkit.event.HandlerList;
 import org.bukkit.scheduler.BukkitRunnable;
 
 import java.util.List;
@@ -38,7 +40,8 @@ public class BattleCommand implements CommandExecutor {
                                 "gamemode survival @a",
                                 "weather clear",
                                 "effect clear @a",
-                                "clear @a"
+                                "clear @a",
+                                "experience set @a 0"
                         );
 
                         Bukkit.getScheduler().runTask(BattlePlugin.getPlugin(), () -> {
@@ -53,6 +56,12 @@ public class BattleCommand implements CommandExecutor {
                             }
                         });
                         Bukkit.broadcastMessage("Battle has started!");
+
+                        var gracePeriod = new GracePeriodHandler(BattlePlugin.getPlugin());
+
+                        countDownGrace(20);
+
+                        HandlerList.unregisterAll(gracePeriod);
                     }
                 }.runTaskAsynchronously(BattlePlugin.getPlugin());
 
@@ -68,6 +77,40 @@ public class BattleCommand implements CommandExecutor {
         }
 
         return true;
+    }
+
+    private static void countDownGrace(int sec) {
+        if (sec < 1) return;
+
+        Bukkit.broadcastMessage(sec + " second grace period started!");
+
+        try {
+            Thread.sleep(1000);
+        } catch (InterruptedException e) {
+            throw new RuntimeException(e);
+        }
+
+        for (int i = sec - 1; i >= 1; --i) {
+            if (i > 20) {
+                if (i % 10 == 0) {
+                    Bukkit.broadcastMessage(i + " seconds until grace period ends!");
+                }
+            } else if (i > 5) {
+                if (i % 5 == 0) {
+                    Bukkit.broadcastMessage(i + " seconds until grace period ends!");
+                }
+            } else {
+                Bukkit.broadcastMessage(i + "...");
+            }
+
+            try {
+                Thread.sleep(1000);
+            } catch (InterruptedException e) {
+                throw new RuntimeException(e);
+            }
+        }
+
+        Bukkit.broadcastMessage("Fighting begins!");
     }
 
     private static void countDown() {

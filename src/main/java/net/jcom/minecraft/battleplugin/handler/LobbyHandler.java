@@ -9,6 +9,7 @@ import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.entity.FoodLevelChangeEvent;
 import org.bukkit.event.entity.PlayerDeathEvent;
 import org.bukkit.plugin.Plugin;
+import org.spigotmc.event.entity.EntityMountEvent;
 
 public class LobbyHandler implements Listener {
 
@@ -33,7 +34,7 @@ public class LobbyHandler implements Listener {
     }
 
     @EventHandler
-    public void onPlayerHunger(FoodLevelChangeEvent foodLevelChangeEvent){
+    public void onPlayerHunger(FoodLevelChangeEvent foodLevelChangeEvent) {
         if (!(foodLevelChangeEvent.getEntity() instanceof Player p)) {
             return;
         }
@@ -41,6 +42,17 @@ public class LobbyHandler implements Listener {
         if (p.getGameMode() == GameMode.ADVENTURE) {
             foodLevelChangeEvent.setCancelled(true);
             p.setFoodLevel(20);
+        }
+    }
+
+    @EventHandler
+    public void onHorseMount(EntityMountEvent entityMountEvent) {
+        if (!(entityMountEvent.getEntity() instanceof Player p)) {
+            return;
+        }
+
+        if (p.getGameMode() == GameMode.ADVENTURE) {
+            entityMountEvent.setCancelled(true);
         }
     }
 }
