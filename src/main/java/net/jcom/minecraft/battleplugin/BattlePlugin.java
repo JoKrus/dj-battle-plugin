@@ -41,6 +41,8 @@ public final class BattlePlugin extends JavaPlugin {
         new LobbyHandler(this);
         new PlayerCommandSendHandler(this);
         new PreventBedHandler(this);
+        // Only for debug
+        // new BattleHandler(this);
     }
 
     @Override

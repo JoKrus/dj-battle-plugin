@@ -4,6 +4,8 @@ import net.jcom.minecraft.battleplugin.BattlePlugin;
 import net.jcom.minecraft.battleplugin.Defaults;
 import net.jcom.minecraft.battleplugin.data.IsBattleGoingOn;
 import net.jcom.minecraft.battleplugin.handler.GracePeriodHandler;
+import net.jcom.minecraft.battleplugineventapi.event.BattleStartedEvent;
+import net.jcom.minecraft.battleplugineventapi.event.BattleStoppedEvent;
 import org.bukkit.Bukkit;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
@@ -73,6 +75,10 @@ public class BattleCommand implements CommandExecutor {
 
                         IsBattleGoingOn.saveData(true, false);
 
+                        Bukkit.getScheduler().runTask(BattlePlugin.getPlugin(), () -> {
+                            Bukkit.getPluginManager().callEvent(new BattleStartedEvent());
+                        });
+
                         var gracePeriod = new GracePeriodHandler(BattlePlugin.getPlugin());
 
                         countDownGrace(getConfig().getInt(Defaults.GRACE_PERIOD_KEY));
@@ -108,6 +114,8 @@ public class BattleCommand implements CommandExecutor {
                 }
 
                 Bukkit.broadcastMessage("Battle was stopped!");
+
+                Bukkit.getPluginManager().callEvent(new BattleStoppedEvent());
             }
             case "init" -> {
                 List<String> cmds = List.of(
