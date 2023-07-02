@@ -119,7 +119,7 @@ public class TeamConfigSerializer {
                 return TeamConfigWrapper.ofTeamConfig(config);
             } catch (IOException e) {
                 e.printStackTrace();
-                return null;
+                return TeamConfigWrapper.ofTeamConfig(TeamConfig.EMPTY);
             }
         }
     }

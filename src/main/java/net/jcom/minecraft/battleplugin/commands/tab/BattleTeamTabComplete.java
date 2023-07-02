@@ -27,11 +27,11 @@ public class BattleTeamTabComplete implements TabCompleter {
                     complete.add("join");
                 }
 
-                if (player.hasPermission("battle-plugin.battle.leave")) {
+                if (player.hasPermission("battle-plugin.team.leave")) {
                     complete.add("leave");
                 }
 
-                if (player.hasPermission("battle-plugin.battle.list")) {
+                if (player.hasPermission("battle-plugin.team.list")) {
                     complete.add("list");
                 }
 
@@ -49,7 +49,6 @@ public class BattleTeamTabComplete implements TabCompleter {
                         //Get all teamnames
                         complete.addAll(TeamConfigSerializer.loadData().biTeamToPlayers.keySet());
                         complete.sort(String::compareToIgnoreCase);
-
 
                         var arrList = new ArrayList<>(Arrays.stream(args).toList());
                         arrList.remove(0);

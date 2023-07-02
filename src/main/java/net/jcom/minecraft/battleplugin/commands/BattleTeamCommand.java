@@ -52,9 +52,15 @@ public class BattleTeamCommand implements CommandExecutor {
                 p.sendMessage("You joined \"" + teamName + "\" successfully.");
                 var data = TeamConfigSerializer.loadData();
 
-                for (var playersInTeam : data.biTeamToPlayers.get(teamName)) {
-                    if (playersInTeam.equals(p)) continue;
-                    p.sendMessage(p.getName() + " just joined your team!");
+                if (data.biTeamToPlayers.get(teamName) != null) {
+                    var list = data.biTeamToPlayers.get(teamName);
+                    if (list != null) {
+                        for (var playersInTeam : list) {
+                            if (playersInTeam.getUniqueId().equals(p.getUniqueId())) continue;
+                            if (playersInTeam.getPlayer() != null)
+                                playersInTeam.getPlayer().sendMessage(p.getName() + " just joined your team!");
+                        }
+                    }
                 }
                 return true;
             }
@@ -78,9 +84,13 @@ public class BattleTeamCommand implements CommandExecutor {
                 var data = TeamConfigSerializer.loadData();
 
                 if (data.biTeamToPlayers.get(teamName) != null) {
-                    for (var playersInTeam : data.biTeamToPlayers.get(teamName)) {
-                        if (playersInTeam.equals(p)) continue;
-                        p.sendMessage(p.getName() + " just left your team!");
+                    var list = data.biTeamToPlayers.get(teamName);
+                    if (list != null) {
+                        for (var playersInTeam : list) {
+                            if (playersInTeam.getUniqueId().equals(p.getUniqueId())) continue;
+                            if (playersInTeam.getPlayer() != null)
+                                playersInTeam.getPlayer().sendMessage(p.getName() + " just left your team!");
+                        }
                     }
                 }
                 return true;

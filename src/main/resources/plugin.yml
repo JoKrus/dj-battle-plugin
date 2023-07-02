@@ -23,6 +23,10 @@ permissions:
     children:
       battle-plugin.battle.*: true
 
+  battle-plugin.battle:
+    default: op
+    description: Base for Battle-Management | Permission
+
   battle-plugin.battle.*:
     default: op
     description: Battle-Management | Permission
@@ -47,6 +51,10 @@ permissions:
   battle-plugin.battle.init:
     default: op
     description: Permission to initialize a battle world from config | Permission
+
+  battle-plugin.team:
+    default: true
+    description: Base for Battle-Team-Management | Permission
 
   battle-plugin.team.*:
     default: true
