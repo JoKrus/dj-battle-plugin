@@ -1,6 +1,7 @@
 package net.jcom.minecraft.battleplugin;
 
 import net.jcom.minecraft.battleplugin.commands.BattleCommand;
+import net.jcom.minecraft.battleplugin.commands.BattleTeamCommand;
 import net.jcom.minecraft.battleplugin.commands.tab.BattleTabComplete;
 import net.jcom.minecraft.battleplugin.data.IsBattleGoingOn;
 import net.jcom.minecraft.battleplugin.handler.BattleHandler;
@@ -36,8 +37,10 @@ public final class BattlePlugin extends JavaPlugin {
 
         IsBattleGoingOn.init();
 
-        getCommand("battle").setExecutor(new BattleCommand());
-        getCommand("battle").setTabCompleter(new BattleTabComplete());
+        getCommand("djbattle").setExecutor(new BattleCommand());
+        getCommand("djbattle").setTabCompleter(new BattleTabComplete());
+
+        getCommand("djteam").setExecutor(new BattleTeamCommand());
 
         new LobbyHandler(this);
         new PlayerCommandSendHandler(this);

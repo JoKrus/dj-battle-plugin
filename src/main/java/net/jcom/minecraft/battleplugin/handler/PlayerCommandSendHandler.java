@@ -18,7 +18,7 @@ public class PlayerCommandSendHandler implements Listener {
     public void onCommandSend(PlayerCommandPreprocessEvent playerCommandPreprocessEvent) {
         String cmd = playerCommandPreprocessEvent.getMessage().substring(1);
         if (IsBattleGoingOn.loadData()) {
-            if (!cmd.startsWith("battle stop")) {
+            if (!cmd.startsWith("djbattle stop")) {
                 playerCommandPreprocessEvent.setCancelled(true);
                 playerCommandPreprocessEvent.getPlayer().sendMessage(playerCommandPreprocessEvent.getMessage()
                         + " was stopped because a battle is going on.");

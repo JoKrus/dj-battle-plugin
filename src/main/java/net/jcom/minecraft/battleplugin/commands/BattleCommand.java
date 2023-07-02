@@ -40,18 +40,21 @@ public class BattleCommand implements CommandExecutor {
 
                         List<String> cmds = List.of(
                                 "time set 0",
-                                "difficulty normal",
-                                "gamemode survival @a",
                                 "weather clear",
                                 "effect clear @a",
                                 "clear @a",
+                                "difficulty normal",
+                                "give @a minecraft:bread 10",
                                 "experience set @a 0",
                                 "worldborder center " + getXZLoc(getConfig().getString(Defaults.BATTLE_LOCATION_KEY)),
                                 "worldborder set " + getConfig().getInt(Defaults.WORLD_BORDER_INIT_WIDTH_KEY) + " 0",
                                 "worldborder set " + getConfig().getInt(Defaults.WORLD_BORDER_END_WIDTH_KEY) + " " +
                                         getConfig().getInt(Defaults.BATTLE_DURATION_KEY),
-                                "tp @a " + getConfig().getString(Defaults.BATTLE_LOCATION_KEY)
+                                "tp @a " + getConfig().getString(Defaults.BATTLE_LOCATION_KEY),
+                                "gamemode survival @a"
                         );
+
+                        var gracePeriod = new GracePeriodHandler(BattlePlugin.getPlugin());
 
                         Bukkit.getScheduler().runTask(BattlePlugin.getPlugin(), () -> {
                             if (!IsBattleGoingOn.loadData()) {
@@ -78,8 +81,6 @@ public class BattleCommand implements CommandExecutor {
                         Bukkit.getScheduler().runTask(BattlePlugin.getPlugin(), () -> {
                             Bukkit.getPluginManager().callEvent(new BattleStartedEvent());
                         });
-
-                        var gracePeriod = new GracePeriodHandler(BattlePlugin.getPlugin());
 
                         countDownGrace(getConfig().getInt(Defaults.GRACE_PERIOD_KEY));
 

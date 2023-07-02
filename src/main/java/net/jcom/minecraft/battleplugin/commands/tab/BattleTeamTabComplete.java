@@ -10,7 +10,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 
-public class BattleTabComplete implements TabCompleter {
+public class BattleTeamTabComplete implements TabCompleter {
 
 
     @Override
@@ -20,22 +20,7 @@ public class BattleTabComplete implements TabCompleter {
         if (sender instanceof Player player) {
 
             if (args.length == 1) {
-
-                if (player.hasPermission("battle-plugin.battle.start")) {
-                    complete.add("start");
-                }
-
-                if (player.hasPermission("battle-plugin.battle.stop")) {
-                    complete.add("stop");
-                }
-
-                if (player.hasPermission("battle-plugin.battle.reload")) {
-                    complete.add("reload");
-                }
-
-                if (player.hasPermission("battle-plugin.battle.init")) {
-                    complete.add("init");
-                }
+                complete.addAll(List.of("join", "leave", "list"));
 
                 if (!args[args.length - 1].isEmpty()) {
                     for (String entry : complete) {
@@ -44,6 +29,16 @@ public class BattleTabComplete implements TabCompleter {
                         }
                     }
                     complete.clear();
+                }
+            } else if (args.length == 2) {
+                switch (args[0]) {
+                    case "join": {
+                        //Get all teamnames
+                    }
+                    case "leave": {
+                    }
+                    default: {
+                    }
                 }
             }
         }

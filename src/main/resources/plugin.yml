@@ -4,20 +4,25 @@ main: net.jcom.minecraft.battleplugin.BattlePlugin
 api-version: '1.20'
 load: STARTUP
 commands:
-  battle:
+  djbattle:
     usage: /<command>
     aliases: [ ]
-    description: Battle-Command
-    permission: battleplugin.battle
+    description: Battle Management-Command
+    permission: battle-plugin.battle
+
+  djteam:
+    usage: /<command>
+    aliases: [ ]
+    description: Battle Team-Command
 
 permissions:
-  battleplugin.*:
+  battle-plugin.*:
     default: op
     description: OP-Permission for everything
     children:
-      battleplugin.battle.*: true
+      battle-plugin.battle.*: true
 
-  battleplugin.battle.*:
+  battle-plugin.battle.*:
     default: op
     description: Battle-Management | Permission
     children:
@@ -26,18 +31,18 @@ permissions:
       reload: true
       init: true
 
-  battleplugin.battle.start:
+  battle-plugin.battle.start:
     default: op
     description: Permission to start the battle | Permission
 
-  battleplugin.battle.stop:
+  battle-plugin.battle.stop:
     default: op
     description: Permission to stop the battle | Permission
 
-  battleplugin.battle.reload:
+  battle-plugin.battle.reload:
     default: op
     description: Permission to reload the config | Permission
 
-  battleplugin.battle.init:
+  battle-plugin.battle.init:
     default: op
     description: Permission to initialize a battle world from config | Permission

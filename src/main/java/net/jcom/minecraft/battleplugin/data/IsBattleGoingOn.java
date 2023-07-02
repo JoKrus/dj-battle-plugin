@@ -21,6 +21,8 @@ public class IsBattleGoingOn implements Serializable {
     public final AtomicBoolean isGoing;
     public final AtomicBoolean isTimer;
 
+    public static final Object lock = new Object();
+
     private IsBattleGoingOn(boolean isBattleGoingOn, boolean isTimer) {
         this.isGoing = new AtomicBoolean(isBattleGoingOn);
         this.isTimer = new AtomicBoolean(isTimer);
@@ -41,8 +43,10 @@ public class IsBattleGoingOn implements Serializable {
             IsBattleGoingOn isb = new IsBattleGoingOn(toSave, isTimer);
 
             BukkitObjectOutputStream out = new BukkitObjectOutputStream(new GZIPOutputStream(new FileOutputStream(BATTLE_PATH)));
-            out.writeObject(isb);
-            out.close();
+            synchronized (lock) {
+                out.writeObject(isb);
+                out.close();
+            }
             return true;
         } catch (IOException e) {
             e.printStackTrace();
@@ -53,8 +57,11 @@ public class IsBattleGoingOn implements Serializable {
     public static IsBattleGoingOn loadDataWithTimer() {
         try {
             BukkitObjectInputStream in = new BukkitObjectInputStream(new GZIPInputStream(new FileInputStream(BATTLE_PATH)));
-            IsBattleGoingOn data = (IsBattleGoingOn) in.readObject();
-            in.close();
+            IsBattleGoingOn data;
+            synchronized (lock) {
+                data = (IsBattleGoingOn) in.readObject();
+                in.close();
+            }
             return data;
         } catch (ClassNotFoundException | IOException e) {
             Bukkit.getLogger().info("Reading went wrong, so returning false");
