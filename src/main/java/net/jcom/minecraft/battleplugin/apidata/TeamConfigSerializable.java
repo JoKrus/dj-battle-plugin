@@ -1,5 +1,6 @@
 package net.jcom.minecraft.battleplugin.apidata;
 
+import net.jcom.minecraft.battleplugineventapi.data.TeamConfig;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 

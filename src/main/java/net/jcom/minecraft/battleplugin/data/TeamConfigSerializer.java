@@ -2,9 +2,9 @@ package net.jcom.minecraft.battleplugin.data;
 
 import net.jcom.minecraft.battleplugin.BattlePlugin;
 import net.jcom.minecraft.battleplugin.Defaults;
-import net.jcom.minecraft.battleplugin.apidata.TeamConfig;
 import net.jcom.minecraft.battleplugin.apidata.TeamConfigSerializable;
 import net.jcom.minecraft.battleplugin.apidata.TeamConfigWrapper;
+import net.jcom.minecraft.battleplugineventapi.data.TeamConfig;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.tuple.Pair;
 import org.bukkit.entity.Player;

@@ -2,7 +2,9 @@ package net.jcom.minecraft.battleplugin.commands;
 
 import net.jcom.minecraft.battleplugin.BattlePlugin;
 import net.jcom.minecraft.battleplugin.Defaults;
+import net.jcom.minecraft.battleplugin.apidata.TeamConfigWrapper;
 import net.jcom.minecraft.battleplugin.data.IsBattleGoingOn;
+import net.jcom.minecraft.battleplugin.data.TeamConfigSerializer;
 import net.jcom.minecraft.battleplugin.handler.GracePeriodHandler;
 import net.jcom.minecraft.battleplugineventapi.event.BattleStartedEvent;
 import net.jcom.minecraft.battleplugineventapi.event.BattleStoppedEvent;
@@ -80,7 +82,8 @@ public class BattleCommand implements CommandExecutor {
                         var gracePeriod = new GracePeriodHandler(BattlePlugin.getPlugin());
 
                         Bukkit.getScheduler().runTask(BattlePlugin.getPlugin(), () -> {
-                            Bukkit.getPluginManager().callEvent(new BattleStartedEvent());
+                            var config = TeamConfigWrapper.toTeamConfig(TeamConfigSerializer.loadData());
+                            Bukkit.getPluginManager().callEvent(new BattleStartedEvent(config));
                         });
 
                         countDownGrace(getConfig().getInt(Defaults.GRACE_PERIOD_KEY));

@@ -1,6 +1,7 @@
 package net.jcom.minecraft.battleplugin.apidata;
 
 import com.google.common.collect.HashBiMap;
+import net.jcom.minecraft.battleplugineventapi.data.TeamConfig;
 import org.bukkit.entity.Player;
 
 import java.util.HashMap;
