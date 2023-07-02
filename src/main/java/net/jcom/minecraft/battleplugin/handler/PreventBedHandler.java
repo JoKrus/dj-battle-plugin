@@ -1,6 +1,7 @@
 package net.jcom.minecraft.battleplugin.handler;
 
 import org.bukkit.Bukkit;
+import org.bukkit.ChatColor;
 import org.bukkit.block.data.type.Bed;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -17,7 +18,7 @@ public class PreventBedHandler implements Listener {
     public void preventBedPlaced(BlockPlaceEvent blockPlaceEvent) {
         if (blockPlaceEvent.getBlockPlaced().getBlockData() instanceof Bed) {
             blockPlaceEvent.setCancelled(true);
-            blockPlaceEvent.getPlayer().sendMessage("Beds are not allowed to be placed.");
+            blockPlaceEvent.getPlayer().sendMessage(ChatColor.RED + "Beds are not allowed to be placed.");
         }
     }
 }

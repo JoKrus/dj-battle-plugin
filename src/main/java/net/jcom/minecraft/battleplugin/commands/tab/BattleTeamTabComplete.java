@@ -20,7 +20,17 @@ public class BattleTeamTabComplete implements TabCompleter {
         if (sender instanceof Player player) {
 
             if (args.length == 1) {
-                complete.addAll(List.of("join", "leave", "list"));
+                if (player.hasPermission("battle-plugin.team.join")) {
+                    complete.add("join");
+                }
+
+                if (player.hasPermission("battle-plugin.battle.leave")) {
+                    complete.add("leave");
+                }
+
+                if (player.hasPermission("battle-plugin.battle.list")) {
+                    complete.add("list");
+                }
 
                 if (!args[args.length - 1].isEmpty()) {
                     for (String entry : complete) {

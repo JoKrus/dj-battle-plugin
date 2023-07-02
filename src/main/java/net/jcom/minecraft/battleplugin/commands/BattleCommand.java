@@ -7,6 +7,7 @@ import net.jcom.minecraft.battleplugin.handler.GracePeriodHandler;
 import net.jcom.minecraft.battleplugineventapi.event.BattleStartedEvent;
 import net.jcom.minecraft.battleplugineventapi.event.BattleStoppedEvent;
 import org.bukkit.Bukkit;
+import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
@@ -22,14 +23,14 @@ public class BattleCommand implements CommandExecutor {
     @Override
     public boolean onCommand(@NotNull CommandSender sender, @NotNull Command command, @NotNull String label, String[] args) {
         if (args.length == 0) {
-            sender.sendMessage("Missing argument");
+            sender.sendMessage(ChatColor.RED + "Missing argument");
             return false;
         }
 
         switch (args[0].toLowerCase()) {
             case "start" -> {
                 if (IsBattleGoingOn.loadData()) {
-                    sender.sendMessage("Battle already going on.");
+                    sender.sendMessage(ChatColor.RED + "Battle already going on.");
                     return false;
                 }
                 IsBattleGoingOn.saveData(true, true);
@@ -54,8 +55,6 @@ public class BattleCommand implements CommandExecutor {
                                 "gamemode survival @a"
                         );
 
-                        var gracePeriod = new GracePeriodHandler(BattlePlugin.getPlugin());
-
                         Bukkit.getScheduler().runTask(BattlePlugin.getPlugin(), () -> {
                             if (!IsBattleGoingOn.loadData()) {
                                 return;
@@ -78,6 +77,8 @@ public class BattleCommand implements CommandExecutor {
 
                         IsBattleGoingOn.saveData(true, false);
 
+                        var gracePeriod = new GracePeriodHandler(BattlePlugin.getPlugin());
+
                         Bukkit.getScheduler().runTask(BattlePlugin.getPlugin(), () -> {
                             Bukkit.getPluginManager().callEvent(new BattleStartedEvent());
                         });
@@ -90,7 +91,7 @@ public class BattleCommand implements CommandExecutor {
             }
             case "stop" -> {
                 if (!IsBattleGoingOn.loadData()) {
-                    sender.sendMessage("No battle present right now.");
+                    sender.sendMessage(ChatColor.RED + "No battle present right now.");
                     return false;
                 }
 

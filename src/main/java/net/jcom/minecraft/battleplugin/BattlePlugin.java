@@ -1,9 +1,12 @@
 package net.jcom.minecraft.battleplugin;
 
+import com.google.gson.Gson;
 import net.jcom.minecraft.battleplugin.commands.BattleCommand;
 import net.jcom.minecraft.battleplugin.commands.BattleTeamCommand;
 import net.jcom.minecraft.battleplugin.commands.tab.BattleTabComplete;
+import net.jcom.minecraft.battleplugin.commands.tab.BattleTeamTabComplete;
 import net.jcom.minecraft.battleplugin.data.IsBattleGoingOn;
+import net.jcom.minecraft.battleplugin.data.TeamConfigSerializer;
 import net.jcom.minecraft.battleplugin.handler.BattleHandler;
 import net.jcom.minecraft.battleplugin.handler.LobbyHandler;
 import net.jcom.minecraft.battleplugin.handler.PlayerCommandSendHandler;
@@ -14,6 +17,7 @@ import org.bukkit.plugin.java.JavaPlugin;
 public final class BattlePlugin extends JavaPlugin {
 
     private static BattlePlugin plugin;
+    public static final Gson GSON = new Gson();
 
     @Override
     public void onEnable() {
@@ -27,6 +31,7 @@ public final class BattlePlugin extends JavaPlugin {
         getConfig().addDefault(Defaults.WORLD_BORDER_INIT_WIDTH_KEY, Defaults.WORLD_BORDER_INIT_WIDTH_VALUE);
         getConfig().addDefault(Defaults.WORLD_BORDER_END_WIDTH_KEY, Defaults.WORLD_BORDER_END_WIDTH_VALUE);
         getConfig().addDefault(Defaults.WORLD_BORDER_LOBBY_WIDTH_KEY, Defaults.WORLD_BORDER_LOBBY_WIDTH_VALUE);
+        getConfig().addDefault(Defaults.TEAM_SIZE_KEY, Defaults.TEAM_SIZE_VALUE);
 
 
         getConfig().options().copyDefaults(true);
@@ -36,11 +41,13 @@ public final class BattlePlugin extends JavaPlugin {
         Bukkit.getLogger().info("BattlePlugin - started!");
 
         IsBattleGoingOn.init();
+        TeamConfigSerializer.init();
 
         getCommand("djbattle").setExecutor(new BattleCommand());
         getCommand("djbattle").setTabCompleter(new BattleTabComplete());
 
         getCommand("djteam").setExecutor(new BattleTeamCommand());
+        getCommand("djteam").setTabCompleter(new BattleTeamTabComplete());
 
         new LobbyHandler(this);
         new PlayerCommandSendHandler(this);

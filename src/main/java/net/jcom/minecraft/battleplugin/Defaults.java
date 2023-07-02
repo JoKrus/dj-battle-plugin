@@ -29,4 +29,6 @@ public class Defaults {
     public static int WORLD_BORDER_LOBBY_WIDTH_VALUE = 1000;
 
 
+    public static String TEAM_SIZE_KEY = "teams.size";
+    public static int TEAM_SIZE_VALUE = 2;
 }

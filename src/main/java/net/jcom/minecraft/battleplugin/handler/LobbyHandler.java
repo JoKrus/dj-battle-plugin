@@ -68,7 +68,6 @@ public class LobbyHandler implements Listener {
             if (e.getEntity() instanceof ItemFrame) {
                 if (e.getDamager() instanceof Player) {
                     e.setCancelled(true);
-
                 }
                 if (e.getDamager() instanceof Projectile) {
                     if (((Projectile) e.getDamager()).getShooter() instanceof Player) {
