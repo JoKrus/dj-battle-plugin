@@ -39,8 +39,9 @@ public class BattleTeamCommand implements CommandExecutor {
                 }
                 var arrList = new ArrayList<>(Arrays.stream(args).toList());
                 arrList.remove(0);
-                String teamname = StringUtils.join(arrList, " ");
-                var success = TeamConfigSerializer.addEntry(teamname, p);
+                String teamName = StringUtils.join(arrList, " ");
+
+                var success = TeamConfigSerializer.addEntry(teamName, p);
 
                 if (!success) {
                     p.sendMessage(ChatColor.RED + "Joining the team failed. You are either in a team already or the " +
@@ -48,10 +49,10 @@ public class BattleTeamCommand implements CommandExecutor {
                     return false;
                 }
 
-                p.sendMessage("You joined \"" + teamname + "\" successfully.");
+                p.sendMessage("You joined \"" + teamName + "\" successfully.");
                 var data = TeamConfigSerializer.loadData();
 
-                for (var playersInTeam : data.biTeamToPlayers.get(teamname)) {
+                for (var playersInTeam : data.biTeamToPlayers.get(teamName)) {
                     if (playersInTeam.equals(p)) continue;
                     p.sendMessage(p.getName() + " just joined your team!");
                 }
@@ -62,9 +63,46 @@ public class BattleTeamCommand implements CommandExecutor {
                     sender.sendMessage(ChatColor.RED + "You can't leave a team during a battle.");
                     return false;
                 }
+
+                var successPair = TeamConfigSerializer.removeEntry(p);
+
+                if (!successPair.getLeft()) {
+                    p.sendMessage(ChatColor.RED + "Leaving failed since you was not a member of a team anyway.");
+                    return false;
+                }
+
+                var teamName = successPair.getRight();
+
+                p.sendMessage("You left \"" + teamName + "\" successfully");
+
+                var data = TeamConfigSerializer.loadData();
+
+                if (data.biTeamToPlayers.get(teamName) != null) {
+                    for (var playersInTeam : data.biTeamToPlayers.get(teamName)) {
+                        if (playersInTeam.equals(p)) continue;
+                        p.sendMessage(p.getName() + " just left your team!");
+                    }
+                }
                 return true;
             }
             case "list" -> {
+                var obj = TeamConfigSerializer.loadData();
+                if (obj.biTeamToPlayers.size() == 0) {
+                    p.sendMessage(ChatColor.RED + "No teams are currently registered!");
+                }
+                StringBuilder sb = new StringBuilder();
+
+                sb.append(ChatColor.UNDERLINE).append(ChatColor.BOLD).append("List of all teams")
+                        .append(ChatColor.RESET).append(System.lineSeparator()).append(System.lineSeparator());
+
+                for (var team : obj.biTeamToPlayers.entrySet()) {
+                    sb.append(ChatColor.UNDERLINE).append(team.getKey()).append(ChatColor.RESET).append(":");
+                    for (var player : team.getValue()) {
+                        sb.append(" ").append(player.getName()).append(",");
+                    }
+                    sb.replace(sb.length() - 1, sb.length(), System.lineSeparator());
+                }
+                p.sendMessage(sb.toString());
                 return true;
             }
             default -> {

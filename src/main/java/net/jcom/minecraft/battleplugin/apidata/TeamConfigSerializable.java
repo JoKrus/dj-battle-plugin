@@ -37,6 +37,4 @@ public class TeamConfigSerializable {
         }
         return serializable;
     }
-
-
 }

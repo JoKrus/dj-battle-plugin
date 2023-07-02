@@ -6,6 +6,7 @@ import net.jcom.minecraft.battleplugin.apidata.TeamConfig;
 import net.jcom.minecraft.battleplugin.apidata.TeamConfigSerializable;
 import net.jcom.minecraft.battleplugin.apidata.TeamConfigWrapper;
 import org.apache.commons.io.FileUtils;
+import org.apache.commons.lang3.tuple.Pair;
 import org.bukkit.entity.Player;
 
 import java.io.File;
@@ -62,6 +63,30 @@ public class TeamConfigSerializer {
 
             saveData(obj);
             return true;
+        }
+    }
+
+    public static Pair<Boolean, String> removeEntry(Player player) {
+        synchronized (lock) {
+            var obj = loadData();
+
+            //Check if player is in a team
+            var currTeam = TeamConfigWrapper.getPlayerToTeamMap(obj).get(player);
+
+            if (currTeam == null) {
+                return Pair.of(false, null);
+            }
+
+            var teamPlayerList = obj.biTeamToPlayers.get(currTeam);
+            if (teamPlayerList.size() == 1) {
+                obj.biTeamToPlayers.remove(currTeam);
+            } else {
+                teamPlayerList.remove(player);
+                obj.biTeamToPlayers.put(currTeam, teamPlayerList);
+            }
+
+            saveData(obj);
+            return Pair.of(true, currTeam);
         }
     }
 
