@@ -45,12 +45,17 @@ public class BattleHandler implements Listener {
             var teamData = TeamConfigSerializer.loadData();
             var team = TeamConfigWrapper.getPlayerToTeamMap(teamData).get(playerRespawnEvent.getPlayer());
             var playersOfTeamAlive =
-                    teamData.biTeamToPlayers.get(team).stream().filter(player -> !player.isDead() &&
-                            (player.getGameMode() == GameMode.SURVIVAL)).toList();
+                    teamData.biTeamToPlayers.get(team).stream().filter(offlinePlayer -> {
+                        if (offlinePlayer.isOnline()) {
+                            var player = offlinePlayer.getPlayer();
+                            return !player.isDead() && player.getGameMode() == GameMode.SURVIVAL;
+                        }
+                        return false;
+                    }).toList();
             if (playersOfTeamAlive.size() > 0) {
                 //https://github.com/CuzIm1Tigaaa/Spectator/blob/master/src/main/java/de/cuzim1tigaaa/spectator/player/SpectateManager.java
                 //TODO make permanent (reapply every x secs) and update on each death etc, also make changeable.
-                playerRespawnEvent.getPlayer().setSpectatorTarget(playersOfTeamAlive.get(0));
+                playerRespawnEvent.getPlayer().setSpectatorTarget(playersOfTeamAlive.get(0).getPlayer());
             } else {
                 //No team member left
                 FileConfiguration config = YamlConfiguration.loadConfiguration(battleData);

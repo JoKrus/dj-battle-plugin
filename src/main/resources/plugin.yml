@@ -49,7 +49,7 @@ permissions:
     description: Permission to initialize a battle world from config | Permission
 
   battle-plugin.team.*:
-    default: op
+    default: true
     description: Battle-Team-Management | Permission
     children:
       join: true

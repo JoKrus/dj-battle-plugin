@@ -93,14 +93,14 @@ public class BattleTeamCommand implements CommandExecutor {
                 StringBuilder sb = new StringBuilder();
 
                 sb.append(ChatColor.UNDERLINE).append(ChatColor.BOLD).append("List of all teams")
-                        .append(ChatColor.RESET).append(System.lineSeparator()).append(System.lineSeparator());
+                        .append(ChatColor.RESET).append("\n").append("\n");
 
                 for (var team : obj.biTeamToPlayers.entrySet()) {
                     sb.append(ChatColor.UNDERLINE).append(team.getKey()).append(ChatColor.RESET).append(":");
                     for (var player : team.getValue()) {
                         sb.append(" ").append(player.getName()).append(",");
                     }
-                    sb.replace(sb.length() - 1, sb.length(), System.lineSeparator());
+                    sb.replace(sb.length() - 1, sb.length(), "\n");
                 }
                 p.sendMessage(sb.toString());
                 return true;
