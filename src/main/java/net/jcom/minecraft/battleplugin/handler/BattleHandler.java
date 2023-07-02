@@ -1,7 +1,9 @@
 package net.jcom.minecraft.battleplugin.handler;
 
+import net.jcom.minecraft.battleplugin.apidata.TeamConfigWrapper;
 import net.jcom.minecraft.battleplugin.data.DataUtils;
 import net.jcom.minecraft.battleplugin.data.IsBattleGoingOn;
+import net.jcom.minecraft.battleplugin.data.TeamConfigSerializer;
 import org.bukkit.Bukkit;
 import org.bukkit.GameMode;
 import org.bukkit.configuration.file.FileConfiguration;
@@ -11,6 +13,7 @@ import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.PlayerDeathEvent;
 import org.bukkit.event.player.PlayerRespawnEvent;
+import org.bukkit.event.player.PlayerToggleSneakEvent;
 import org.bukkit.plugin.Plugin;
 
 import java.io.File;
@@ -39,19 +42,31 @@ public class BattleHandler implements Listener {
         if (IsBattleGoingOn.loadData()) {
             playerRespawnEvent.getPlayer().setGameMode(GameMode.SPECTATOR);
 
-
-            //TODO only allow spectate of alive teammates in survivor mode
-            // if all of team is dead, else into a player
-
-
-            FileConfiguration config = YamlConfiguration.loadConfiguration(battleData);
-            var loc = config.getLocation(playerRespawnEvent.getPlayer().getUniqueId() + ".location");
-            if (loc != null) {
-                playerRespawnEvent.setRespawnLocation(loc);
+            var teamData = TeamConfigSerializer.loadData();
+            var team = TeamConfigWrapper.getPlayerToTeamMap(teamData).get(playerRespawnEvent.getPlayer());
+            var playersOfTeamAlive =
+                    teamData.biTeamToPlayers.get(team).stream().filter(player -> !player.isDead() &&
+                            (player.getGameMode() == GameMode.SURVIVAL)).toList();
+            if (playersOfTeamAlive.size() > 0) {
+                //https://github.com/CuzIm1Tigaaa/Spectator/blob/master/src/main/java/de/cuzim1tigaaa/spectator/player/SpectateManager.java
+                //TODO make permanent (reapply every x secs) and update on each death etc, also make changeable.
+                playerRespawnEvent.getPlayer().setSpectatorTarget(playersOfTeamAlive.get(0));
+            } else {
+                //No team member left
+                FileConfiguration config = YamlConfiguration.loadConfiguration(battleData);
+                var loc = config.getLocation(playerRespawnEvent.getPlayer().getUniqueId() + ".location");
+                if (loc != null) {
+                    playerRespawnEvent.setRespawnLocation(loc);
+                }
             }
         }
 
         DataUtils.setAndSave(battleData, playerRespawnEvent.getPlayer().getUniqueId() + ".location", null);
+
+    }
+
+    @EventHandler
+    public void onToggleSneak(PlayerToggleSneakEvent toggleSneakEvent) {
 
     }
 }

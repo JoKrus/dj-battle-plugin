@@ -1,12 +1,15 @@
 package net.jcom.minecraft.battleplugin.commands.tab;
 
 
+import net.jcom.minecraft.battleplugin.data.TeamConfigSerializer;
+import org.apache.commons.lang3.StringUtils;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.TabCompleter;
 import org.bukkit.entity.Player;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 
@@ -44,6 +47,23 @@ public class BattleTeamTabComplete implements TabCompleter {
                 switch (args[0]) {
                     case "join": {
                         //Get all teamnames
+                        complete.addAll(TeamConfigSerializer.loadData().biTeamToPlayers.keySet());
+                        complete.sort(String::compareToIgnoreCase);
+
+
+                        var arrList = new ArrayList<>(Arrays.stream(args).toList());
+                        arrList.remove(0);
+                        String myArgTilNow = StringUtils.join(arrList, " ");
+
+                        //update since space is okay
+                        if (!myArgTilNow.isEmpty()) {
+                            for (String entry : complete) {
+                                if (entry.startsWith(myArgTilNow)) {
+                                    completeStarted.add(entry);
+                                }
+                            }
+                            complete.clear();
+                        }
                     }
                     case "leave": {
                     }
