@@ -2,10 +2,7 @@ package net.jcom.minecraft.battleplugin.handler;
 
 import org.bukkit.Bukkit;
 import org.bukkit.GameMode;
-import org.bukkit.entity.EntityType;
-import org.bukkit.entity.ItemFrame;
-import org.bukkit.entity.Player;
-import org.bukkit.entity.Projectile;
+import org.bukkit.entity.*;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
@@ -57,28 +54,41 @@ public class LobbyHandler implements Listener {
         }
     }
 
-
     @EventHandler
-    public void frameDrop(EntityDamageByEntityEvent e) {
-        if (!(e.getDamager() instanceof Player p)) {
+    public void onHorseDamaged(EntityDamageByEntityEvent entityDamageEvent) {
+        if (!(entityDamageEvent.getDamager() instanceof Player p)) {
             return;
         }
 
-        if (p.getGameMode() == GameMode.ADVENTURE) {
-            if (e.getEntity() instanceof ItemFrame) {
-                if (e.getDamager() instanceof Player) {
-                    e.setCancelled(true);
-                }
-                if (e.getDamager() instanceof Projectile) {
-                    if (((Projectile) e.getDamager()).getShooter() instanceof Player) {
-                        e.getDamager().remove();
+        if (entityDamageEvent.getEntity() instanceof Horse) {
+            if (p.getGameMode() == GameMode.ADVENTURE) {
+                entityDamageEvent.setCancelled(true);
+            }
+        }
+    }
+
+
+    @EventHandler
+    public void frameDrop(EntityDamageByEntityEvent e) {
+        if (e.getDamager() instanceof Player p) {
+            if (p.getGameMode() == GameMode.ADVENTURE) {
+                if (e.getEntity() instanceof ItemFrame) {
+                    if (e.getDamager() instanceof Player) {
                         e.setCancelled(true);
                     }
                 }
             }
         }
-    }
 
+        if (e.getDamager() instanceof Projectile projectile) {
+            if (projectile.getShooter() instanceof Player p) {
+                if (p.getGameMode() == GameMode.ADVENTURE) {
+                    e.getDamager().remove();
+                    e.setCancelled(true);
+                }
+            }
+        }
+    }
 
     @EventHandler
     public void frameRotate(PlayerInteractEntityEvent e) {
