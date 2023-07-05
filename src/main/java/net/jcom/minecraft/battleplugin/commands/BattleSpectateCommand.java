@@ -37,7 +37,6 @@ public class BattleSpectateCommand implements CommandExecutor {
         }
 
         var arrList = new ArrayList<>(Arrays.stream(args).toList());
-        arrList.remove(0);
         String playerName = StringUtils.join(arrList, " ");
 
         var target = Bukkit.getPlayer(playerName);
