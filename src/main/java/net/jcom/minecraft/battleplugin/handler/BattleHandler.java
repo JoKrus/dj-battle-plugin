@@ -1,5 +1,6 @@
 package net.jcom.minecraft.battleplugin.handler;
 
+import net.jcom.minecraft.battleplugin.BattlePlugin;
 import net.jcom.minecraft.battleplugin.apidata.TeamConfigWrapper;
 import net.jcom.minecraft.battleplugin.data.DataUtils;
 import net.jcom.minecraft.battleplugin.data.IsBattleGoingOn;
@@ -7,6 +8,7 @@ import net.jcom.minecraft.battleplugin.data.SpectateDataSerializer;
 import net.jcom.minecraft.battleplugin.data.TeamConfigSerializer;
 import net.jcom.minecraft.battleplugin.manager.SpectatorManager;
 import org.bukkit.Bukkit;
+import org.bukkit.ChatColor;
 import org.bukkit.GameMode;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.configuration.file.FileConfiguration;
@@ -15,6 +17,7 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.PlayerDeathEvent;
+import org.bukkit.event.player.PlayerAnimationEvent;
 import org.bukkit.event.player.PlayerRespawnEvent;
 import org.bukkit.event.player.PlayerToggleSneakEvent;
 import org.bukkit.plugin.Plugin;
@@ -81,8 +84,12 @@ public class BattleHandler implements Listener {
                 //https://github.com/CuzIm1Tigaaa/Spectator/blob/master/src/main/java/de/cuzim1tigaaa/spectator/player/SpectateManager.java
                 var target = playersOfTeamAlive.get(0).getPlayer();
                 playerRespawnEvent.setRespawnLocation(target.getLocation());
-                SpectateDataSerializer.setTarget(playerRespawnEvent.getPlayer(), target);
-                SpectatorManager.tpAndSpectate(playerRespawnEvent.getPlayer(), target);
+
+                //spectate after a brief delay
+                Bukkit.getScheduler().scheduleSyncDelayedTask(BattlePlugin.getPlugin(), () -> {
+                    SpectateDataSerializer.setTarget(playerRespawnEvent.getPlayer(), target);
+                    SpectatorManager.tpAndSpectate(playerRespawnEvent.getPlayer(), target);
+                }, 10);
             } else {
                 //No team member left
                 FileConfiguration config = YamlConfiguration.loadConfiguration(battleData);
@@ -105,10 +112,21 @@ public class BattleHandler implements Listener {
                 var team = TeamConfigWrapper.getPlayerToTeamMap(teamData).get(toggleSneakEvent.getPlayer());
                 var playersOfTeamAlive = getPlayersOfTeamAlive(teamData, team);
                 if (playersOfTeamAlive.size() > 0) {
+                    toggleSneakEvent.getPlayer().sendMessage(ChatColor.RED + "You can not leave your target when your" +
+                            " team mates are still alive!");
                     toggleSneakEvent.setCancelled(true);
                 } else {
                     SpectateDataSerializer.removeTarget(toggleSneakEvent.getPlayer());
                 }
+            }
+        }
+    }
+
+    @EventHandler
+    public void onAnimation(PlayerAnimationEvent playerAnimationEvent) {
+        if (playerAnimationEvent.getPlayer().getGameMode() == GameMode.SPECTATOR) {
+            if (playerAnimationEvent.getPlayer().getSpectatorTarget() != null) {
+                playerAnimationEvent.setCancelled(true);
             }
         }
     }
@@ -129,7 +147,7 @@ public class BattleHandler implements Listener {
         return teamData.biTeamToPlayers.get(team).stream().filter(offlinePlayer -> {
             if (offlinePlayer.isOnline()) {
                 var player = offlinePlayer.getPlayer();
-                return !player.isDead() || player.getGameMode() == GameMode.SPECTATOR;
+                return !player.isDead() && player.getGameMode() == GameMode.SPECTATOR;
             }
             return false;
         }).toList();

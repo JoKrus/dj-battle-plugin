@@ -19,7 +19,7 @@ public class PlayerCommandSendHandler implements Listener {
     public void onCommandSend(PlayerCommandPreprocessEvent playerCommandPreprocessEvent) {
         String cmd = playerCommandPreprocessEvent.getMessage().substring(1);
         if (IsBattleGoingOn.loadData()) {
-            List<String> prefixes = List.of("djspec", "djteam list", "djbattle stop", "spectate");
+            List<String> prefixes = List.of("djspec", "djteam list", "djbattle stop");
 
             boolean startsWithPrefix = false;
             for (String prefix : prefixes) {

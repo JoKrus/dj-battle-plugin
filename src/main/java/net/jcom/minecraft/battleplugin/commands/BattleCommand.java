@@ -7,6 +7,7 @@ import net.jcom.minecraft.battleplugin.data.IsBattleGoingOn;
 import net.jcom.minecraft.battleplugin.data.SpectateDataSerializer;
 import net.jcom.minecraft.battleplugin.data.TeamConfigSerializer;
 import net.jcom.minecraft.battleplugin.handler.GracePeriodHandler;
+import net.jcom.minecraft.battleplugin.manager.SpectatorManager;
 import net.jcom.minecraft.battleplugineventapi.event.BattleStartedEvent;
 import net.jcom.minecraft.battleplugineventapi.event.BattleStoppedEvent;
 import org.bukkit.Bukkit;
@@ -79,6 +80,7 @@ public class BattleCommand implements CommandExecutor {
                         Bukkit.broadcastMessage("Battle has started!");
 
                         IsBattleGoingOn.saveData(true, false);
+                        SpectatorManager.start();
 
                         var gracePeriod = new GracePeriodHandler(BattlePlugin.getPlugin());
 
@@ -121,6 +123,7 @@ public class BattleCommand implements CommandExecutor {
 
                 Bukkit.broadcastMessage("Battle was stopped!");
 
+                SpectatorManager.stop();
                 SpectateDataSerializer.clear();
 
                 Bukkit.getPluginManager().callEvent(new BattleStoppedEvent());

@@ -42,11 +42,12 @@ public class BattleSpectateCommand implements CommandExecutor {
         var target = Bukkit.getPlayer(playerName);
 
         if (target == null) {
-            sender.sendMessage(ChatColor.RED + "Target could not be found.");
+            sender.sendMessage(ChatColor.RED + "Target (\"" + playerName + "\" could not be found.");
             return false;
         }
         if (target.getGameMode() != GameMode.SURVIVAL) {
-            sender.sendMessage(ChatColor.RED + "Your target has to be in survival mode.");
+            sender.sendMessage(ChatColor.RED + "Your target (\"" + target.getName() + "\" has to be in survival mode. " +
+                    "Currently in " + target.getGameMode() + ".");
             return false;
         }
         var teamData = TeamConfigSerializer.loadData();
