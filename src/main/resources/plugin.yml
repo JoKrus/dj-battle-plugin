@@ -5,16 +5,23 @@ api-version: '1.20'
 load: STARTUP
 commands:
   djbattle:
-    usage: /<command>
+    usage: /<command> [start|stop|init|reload]
     aliases: [ ]
     description: Battle Management-Command
     permission: battle-plugin.battle
 
   djteam:
-    usage: /<command>
+    usage: /<command> [join teamName|leave|list]
     aliases: [ ]
     description: Battle Team-Command
     permission: battle-plugin.team
+
+  djspec:
+    usage: /<command> playerName
+    aliases: [ djspectate ]
+    description: Battle Spectator-Command
+    permission: battle-plugin.spectate
+
 
 permissions:
   battle-plugin.*:
@@ -75,3 +82,7 @@ permissions:
   battle-plugin.team.list:
     default: true
     description: Permission to list all teams | Permission
+
+  battle-plugin.spectate:
+    default: true
+    description: Base for Battle-Spectate-Management | Permission

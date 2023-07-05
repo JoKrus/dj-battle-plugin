@@ -4,6 +4,7 @@ import net.jcom.minecraft.battleplugin.BattlePlugin;
 import net.jcom.minecraft.battleplugin.Defaults;
 import net.jcom.minecraft.battleplugin.apidata.TeamConfigWrapper;
 import net.jcom.minecraft.battleplugin.data.IsBattleGoingOn;
+import net.jcom.minecraft.battleplugin.data.SpectateDataSerializer;
 import net.jcom.minecraft.battleplugin.data.TeamConfigSerializer;
 import net.jcom.minecraft.battleplugin.handler.GracePeriodHandler;
 import net.jcom.minecraft.battleplugineventapi.event.BattleStartedEvent;
@@ -119,6 +120,8 @@ public class BattleCommand implements CommandExecutor {
                 }
 
                 Bukkit.broadcastMessage("Battle was stopped!");
+
+                SpectateDataSerializer.clear();
 
                 Bukkit.getPluginManager().callEvent(new BattleStoppedEvent());
             }

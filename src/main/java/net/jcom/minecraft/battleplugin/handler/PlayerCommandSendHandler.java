@@ -19,11 +19,22 @@ public class PlayerCommandSendHandler implements Listener {
     public void onCommandSend(PlayerCommandPreprocessEvent playerCommandPreprocessEvent) {
         String cmd = playerCommandPreprocessEvent.getMessage().substring(1);
         if (IsBattleGoingOn.loadData()) {
-            if (!cmd.startsWith("djbattle stop")) {
+            List<String> prefixes = List.of("djspec", "djteam list", "djbattle stop", "spectate");
+
+            boolean startsWithPrefix = false;
+            for (String prefix : prefixes) {
+                if (cmd.startsWith(prefix)) {
+                    startsWithPrefix = true;
+                    break;
+                }
+            }
+
+            if (!startsWithPrefix) {
                 playerCommandPreprocessEvent.setCancelled(true);
                 playerCommandPreprocessEvent.getPlayer().sendMessage(ChatColor.RED + playerCommandPreprocessEvent.getMessage()
                         + " was stopped because a battle is going on.");
                 Bukkit.getLogger().info(cmd + " was stopped because a battle is going on.");
+                return;
             }
         } else {
             var forbiddenStrings = List.of("warp");

@@ -1,4 +1,4 @@
-package net.jcom.minecraft.battleplugin.apidata;
+package net.jcom.minecraft.battleplugin.data;
 
 import net.jcom.minecraft.battleplugineventapi.data.TeamConfig;
 import org.bukkit.Bukkit;

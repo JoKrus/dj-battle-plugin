@@ -2,7 +2,6 @@ package net.jcom.minecraft.battleplugin.data;
 
 import net.jcom.minecraft.battleplugin.BattlePlugin;
 import net.jcom.minecraft.battleplugin.Defaults;
-import net.jcom.minecraft.battleplugin.apidata.TeamConfigSerializable;
 import net.jcom.minecraft.battleplugin.apidata.TeamConfigWrapper;
 import net.jcom.minecraft.battleplugineventapi.data.TeamConfig;
 import org.apache.commons.io.FileUtils;
@@ -18,7 +17,7 @@ import static net.jcom.minecraft.battleplugin.BattlePlugin.GSON;
 
 public class TeamConfigSerializer {
 
-    public static final Object lock = new Object();
+    public static final Object TEAM_FILE_LOCK = new Object();
     public static final String TEAM_PATH =
             BattlePlugin.getPlugin().getDataFolder().getAbsolutePath() + File.separator +
                     "teamConfig.json";
@@ -37,7 +36,7 @@ public class TeamConfigSerializer {
     }
 
     public static boolean addEntry(String teamName, Player player) {
-        synchronized (lock) {
+        synchronized (TEAM_FILE_LOCK) {
             var obj = loadData();
 
             //Check if player is not in another team
@@ -67,7 +66,7 @@ public class TeamConfigSerializer {
     }
 
     public static Pair<Boolean, String> removeEntry(Player player) {
-        synchronized (lock) {
+        synchronized (TEAM_FILE_LOCK) {
             var obj = loadData();
 
             //Check if player is in a team
@@ -91,7 +90,7 @@ public class TeamConfigSerializer {
     }
 
     public static boolean saveData(TeamConfig teamConfig) {
-        synchronized (lock) {
+        synchronized (TEAM_FILE_LOCK) {
             try {
                 var serializable = TeamConfigSerializable.fromTeamConfig(teamConfig);
                 var jsonString = GSON.toJson(serializable);
@@ -110,7 +109,7 @@ public class TeamConfigSerializer {
     }
 
     public static TeamConfigWrapper loadData() {
-        synchronized (lock) {
+        synchronized (TEAM_FILE_LOCK) {
             try {
                 var strObj = FileUtils.readFileToString(new File(TEAM_PATH), StandardCharsets.UTF_8);
 
