@@ -17,6 +17,7 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Objects;
 
 public class BattleSpectateCommand implements CommandExecutor {
     @Override
@@ -54,7 +55,7 @@ public class BattleSpectateCommand implements CommandExecutor {
         var pTTM = TeamConfigWrapper.getPlayerToTeamMap(teamData);
         var team = pTTM.get(p);
         var targetTeam = pTTM.get(target);
-        if (!targetTeam.equals(team)) {
+        if (!Objects.equals(targetTeam, team)) {
             var playersOfTeamAlive = BattleHandler.getPlayersOfTeamAlive(teamData, team);
             if (playersOfTeamAlive.size() > 0) {
                 sender.sendMessage(ChatColor.RED + "You can only spectate your team until your team is out of the " +

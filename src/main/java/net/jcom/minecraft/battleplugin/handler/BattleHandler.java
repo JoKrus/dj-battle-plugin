@@ -25,6 +25,7 @@ import org.jetbrains.annotations.NotNull;
 
 import java.io.File;
 import java.nio.file.Paths;
+import java.util.ArrayList;
 import java.util.List;
 
 @SuppressWarnings("DataFlowIssue")
@@ -49,8 +50,13 @@ public class BattleHandler implements Listener {
         //Update spectators to another player alive
         var teamData = TeamConfigSerializer.loadData();
         var team = TeamConfigWrapper.getPlayerToTeamMap(teamData).get(playerDeathEvent.getEntity());
-        var playersOfTeamAlive = getPlayersOfTeamAlive(teamData, team);
 
+        if (team == null) {
+            //Not in a team, which is a faulty state but just continue then
+            return;
+        }
+
+        var playersOfTeamAlive = getPlayersOfTeamAlive(teamData, team);
         var teamMatesOfDyingMember = getPlayersOfTeamSpec(teamData, team);
 
         if (playersOfTeamAlive.size() > 0) {
@@ -133,23 +139,33 @@ public class BattleHandler implements Listener {
 
     @NotNull
     public static List<OfflinePlayer> getPlayersOfTeamAlive(TeamConfigWrapper teamData, String team) {
-        return teamData.biTeamToPlayers.get(team).stream().filter(offlinePlayer -> {
-            if (offlinePlayer.isOnline()) {
-                var player = offlinePlayer.getPlayer();
-                return !player.isDead() && player.getGameMode() == GameMode.SURVIVAL;
-            }
-            return false;
-        }).toList();
+        var list = teamData.biTeamToPlayers.get(team);
+        if (list == null) {
+            return new ArrayList<>();
+        } else {
+            return list.stream().filter(offlinePlayer -> {
+                if (offlinePlayer.isOnline()) {
+                    var player = offlinePlayer.getPlayer();
+                    return !player.isDead() && player.getGameMode() == GameMode.SURVIVAL;
+                }
+                return false;
+            }).toList();
+        }
     }
 
     @NotNull
     public static List<OfflinePlayer> getPlayersOfTeamSpec(TeamConfigWrapper teamData, String team) {
-        return teamData.biTeamToPlayers.get(team).stream().filter(offlinePlayer -> {
-            if (offlinePlayer.isOnline()) {
-                var player = offlinePlayer.getPlayer();
-                return !player.isDead() && player.getGameMode() == GameMode.SPECTATOR;
-            }
-            return false;
-        }).toList();
+        var list = teamData.biTeamToPlayers.get(team);
+        if (list == null) {
+            return new ArrayList<>();
+        } else {
+            return list.stream().filter(offlinePlayer -> {
+                if (offlinePlayer.isOnline()) {
+                    var player = offlinePlayer.getPlayer();
+                    return !player.isDead() && player.getGameMode() == GameMode.SPECTATOR;
+                }
+                return false;
+            }).toList();
+        }
     }
 }

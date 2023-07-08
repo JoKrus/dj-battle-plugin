@@ -36,6 +36,10 @@ public class BattleTeamTabComplete implements TabCompleter {
                     complete.add("list");
                 }
 
+                if (player.hasPermission("battle-plugin.team.test")) {
+                    complete.add("test");
+                }
+
                 if (!args[args.length - 1].isEmpty()) {
                     for (String entry : complete) {
                         if (entry.toLowerCase().startsWith(args[args.length - 1].toLowerCase())) {

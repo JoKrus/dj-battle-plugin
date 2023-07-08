@@ -1,9 +1,12 @@
 package net.jcom.minecraft.battleplugin.commands;
 
+import net.jcom.minecraft.battleplugin.apidata.TeamConfigWrapper;
 import net.jcom.minecraft.battleplugin.data.IsBattleGoingOn;
 import net.jcom.minecraft.battleplugin.data.TeamConfigSerializer;
 import org.apache.commons.lang3.StringUtils;
+import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
+import org.bukkit.OfflinePlayer;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
@@ -113,6 +116,40 @@ public class BattleTeamCommand implements CommandExecutor {
                     sb.replace(sb.length() - 1, sb.length(), "\n");
                 }
                 p.sendMessage(sb.toString());
+                return true;
+            }
+            case "test" -> {
+                var onlinePlayers = Bukkit.getOnlinePlayers();
+                var teamData = TeamConfigSerializer.loadData();
+                var playerMap = TeamConfigWrapper.getPlayerToTeamMap(teamData);
+                var noTeamPlayers = new ArrayList<Player>();
+
+                for (var player : onlinePlayers) {
+                    if (!playerMap.containsKey(player)) {
+                        noTeamPlayers.add(player);
+                        player.sendMessage("You need to join a team via /djteam join <Teamname> to participate!");
+                    }
+                }
+
+                var onlineOps =
+                        Bukkit.getOperators().stream().filter(OfflinePlayer::isOnline).map(OfflinePlayer::getPlayer).toList();
+
+                var message = new StringBuilder();
+                if (noTeamPlayers.size() > 0) {
+                    message.append(ChatColor.UNDERLINE).append("The following players are not yet in a team:\n\n")
+                            .append(ChatColor.RESET);
+                    for (var player : noTeamPlayers) {
+                        message.append(player.getName()).append(", ");
+                    }
+                    message.delete(message.length() - 2, message.length());
+                } else {
+                    message.append("Every player is in a team!");
+                }
+
+                for (var op : onlineOps) {
+                    op.sendMessage(message.toString());
+                }
+
                 return true;
             }
             default -> {
