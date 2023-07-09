@@ -18,6 +18,7 @@ import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.PlayerDeathEvent;
 import org.bukkit.event.player.PlayerAnimationEvent;
+import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.event.player.PlayerRespawnEvent;
 import org.bukkit.event.player.PlayerToggleSneakEvent;
 import org.bukkit.plugin.Plugin;
@@ -134,6 +135,13 @@ public class BattleHandler implements Listener {
             if (playerAnimationEvent.getPlayer().getSpectatorTarget() != null) {
                 playerAnimationEvent.setCancelled(true);
             }
+        }
+    }
+
+    @EventHandler
+    public void onPlayerQuit(PlayerQuitEvent playerQuitEvent) {
+        if (playerQuitEvent.getPlayer().getGameMode() == GameMode.SURVIVAL) {
+            playerQuitEvent.getPlayer().setHealth(0);
         }
     }
 
