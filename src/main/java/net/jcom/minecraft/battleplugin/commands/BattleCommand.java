@@ -12,6 +12,7 @@ import net.jcom.minecraft.battleplugineventapi.event.BattleStartedEvent;
 import net.jcom.minecraft.battleplugineventapi.event.BattleStoppedEvent;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
+import org.bukkit.GameMode;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
@@ -21,7 +22,9 @@ import org.bukkit.event.HandlerList;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 public class BattleCommand implements CommandExecutor {
     @Override
@@ -104,6 +107,32 @@ public class BattleCommand implements CommandExecutor {
                 boolean wasTimer = IsBattleGoingOn.loadDataWithTimer().isTimer.get();
                 IsBattleGoingOn.saveData(false, false);
 
+                //check if only one teams players are alive
+
+                var teamData = TeamConfigSerializer.loadData();
+
+                var pToTeam = TeamConfigWrapper.getPlayerToTeamMap(teamData);
+
+                Set<String> teamNames = new HashSet<>();
+
+                for (var pl : Bukkit.getOnlinePlayers().stream()
+                        .filter(player -> player.getGameMode() == GameMode.SURVIVAL)
+                        .toList()) {
+                    var team = pToTeam.get(pl);
+                    if (team == null) {
+                        team = pl.getName();
+                    }
+                    teamNames.add(team);
+                }
+
+                var battleStoppedEvent = new BattleStoppedEvent();
+
+                if (teamNames.size() == 1) {
+                    var winner = teamNames.stream().findFirst().orElse(null);
+                    Bukkit.broadcastMessage(ChatColor.AQUA + winner + " has won the battle! Congratulations!");
+                    battleStoppedEvent = new BattleStoppedEvent(winner);
+                }
+
                 List<String> cmds = List.of(
                         "time set 0",
                         "difficulty peaceful",
@@ -126,7 +155,7 @@ public class BattleCommand implements CommandExecutor {
                 SpectatorManager.stop();
                 SpectateDataSerializer.clear();
 
-                Bukkit.getPluginManager().callEvent(new BattleStoppedEvent());
+                Bukkit.getPluginManager().callEvent(battleStoppedEvent);
             }
             case "init" -> {
                 List<String> cmds = List.of(
