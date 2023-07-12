@@ -132,9 +132,9 @@ public class BattleCommand implements CommandExecutor {
 
                 var battleStoppedEvent = new BattleStoppedEvent();
 
+                var winner = "";
                 if (teamNames.size() == 1) {
-                    var winner = teamNames.stream().findFirst().orElse(null);
-                    Bukkit.broadcastMessage(ChatColor.AQUA + winner + " has won the battle! Congratulations!");
+                    winner = teamNames.stream().findFirst().orElse(null);
                     battleStoppedEvent = new BattleStoppedEvent(winner);
                 }
 
@@ -156,6 +156,7 @@ public class BattleCommand implements CommandExecutor {
                 }
 
                 Bukkit.broadcastMessage("Battle was stopped!");
+                Bukkit.broadcastMessage(ChatColor.AQUA + winner + " has won the battle! Congratulations!");
 
                 SpectatorManager.stop();
                 SpectateDataSerializer.clear();

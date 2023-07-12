@@ -10,10 +10,7 @@ import net.jcom.minecraft.battleplugin.commands.tab.BattleTeamTabComplete;
 import net.jcom.minecraft.battleplugin.data.IsBattleGoingOn;
 import net.jcom.minecraft.battleplugin.data.SpectateDataSerializer;
 import net.jcom.minecraft.battleplugin.data.TeamConfigSerializer;
-import net.jcom.minecraft.battleplugin.handler.BattleHandler;
-import net.jcom.minecraft.battleplugin.handler.LobbyHandler;
-import net.jcom.minecraft.battleplugin.handler.PlayerCommandSendHandler;
-import net.jcom.minecraft.battleplugin.handler.PreventBedHandler;
+import net.jcom.minecraft.battleplugin.handler.*;
 import net.jcom.minecraft.battleplugin.manager.SpectatorManager;
 import org.bukkit.Bukkit;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -63,6 +60,8 @@ public final class BattlePlugin extends JavaPlugin {
         new PlayerCommandSendHandler(this);
         new PreventBedHandler(this);
         new BattleHandler(this);
+        new ChatHandler(this);
+        new BattleApiHandler(this);
     }
 
     @Override
