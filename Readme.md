@@ -26,6 +26,11 @@ Configure the lobby location, spawn location, grace period, map size and map shr
 
 ## Usage
 
+### Config
+
+- Not documented completely right now!
+  - After first server start, check `plugins/BattlePlugin/config.yml` to modify
+
 ### Setup
 
 - Use `/djbattle init` and `/djbattle reload` to apply your config to the server and setup the environment
