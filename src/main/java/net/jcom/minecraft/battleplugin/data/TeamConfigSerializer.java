@@ -6,6 +6,7 @@ import net.jcom.minecraft.battleplugin.apidata.TeamConfigWrapper;
 import net.jcom.minecraft.battleplugineventapi.data.TeamConfig;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.tuple.Pair;
+import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
 
 import java.io.File;
@@ -65,7 +66,7 @@ public class TeamConfigSerializer {
         }
     }
 
-    public static Pair<Boolean, String> removeEntry(Player player) {
+    public static Pair<Boolean, String> removeEntry(OfflinePlayer player) {
         synchronized (TEAM_FILE_LOCK) {
             var obj = loadData();
 

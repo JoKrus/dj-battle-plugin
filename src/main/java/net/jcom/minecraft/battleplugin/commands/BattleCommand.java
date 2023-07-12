@@ -10,6 +10,7 @@ import net.jcom.minecraft.battleplugin.handler.GracePeriodHandler;
 import net.jcom.minecraft.battleplugin.manager.SpectatorManager;
 import net.jcom.minecraft.battleplugineventapi.event.BattleStartedEvent;
 import net.jcom.minecraft.battleplugineventapi.event.BattleStoppedEvent;
+import org.apache.commons.lang3.tuple.Pair;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.GameMode;
@@ -41,6 +42,10 @@ public class BattleCommand implements CommandExecutor {
                     return false;
                 }
                 IsBattleGoingOn.saveData(true, true);
+
+                //Remove offline players, create teams for solo players
+                correctTeamData();
+
                 new BukkitRunnable() {
                     @Override
                     public void run() {
@@ -187,6 +192,28 @@ public class BattleCommand implements CommandExecutor {
         }
 
         return true;
+    }
+
+    private static void correctTeamData() {
+        var configWrapped = TeamConfigSerializer.loadData();
+        var playerMap = TeamConfigWrapper.getPlayerToTeamMap(configWrapped);
+
+        var offlineTeamPlayers = playerMap.keySet().stream()
+                .filter(offlinePlayer -> !offlinePlayer.isOnline())
+                .toList();
+
+        for (var pl : offlineTeamPlayers) {
+            TeamConfigSerializer.removeEntry(pl);
+        }
+
+        var toAddPlayers = Bukkit.getOnlinePlayers().stream()
+                .filter(player -> !playerMap.containsKey(player))
+                .map(player -> Pair.of(player.getName(), player))
+                .toList();
+
+        for (var pair : toAddPlayers) {
+            TeamConfigSerializer.addEntry(pair.getLeft(), pair.getRight());
+        }
     }
 
     private String getXZLoc(String loc) {

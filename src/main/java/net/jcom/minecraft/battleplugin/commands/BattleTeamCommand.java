@@ -19,12 +19,6 @@ import java.util.Arrays;
 public class BattleTeamCommand implements CommandExecutor {
     @Override
     public boolean onCommand(@NotNull CommandSender sender, @NotNull Command command, @NotNull String label, String[] args) {
-        if (!(sender instanceof Player p)) {
-            sender.sendMessage(ChatColor.RED + "Only players can use this command.");
-            return false;
-        }
-
-
         if (args.length == 0) {
             sender.sendMessage(ChatColor.RED + "Missing argument.");
             return false;
@@ -32,6 +26,11 @@ public class BattleTeamCommand implements CommandExecutor {
 
         switch (args[0].toLowerCase()) {
             case "join" -> {
+                if (!(sender instanceof Player p)) {
+                    sender.sendMessage(ChatColor.RED + "Only players can use this command.");
+                    return false;
+                }
+
                 if (IsBattleGoingOn.loadData()) {
                     sender.sendMessage(ChatColor.RED + "You can't join a team during a battle.");
                     return false;
@@ -68,6 +67,11 @@ public class BattleTeamCommand implements CommandExecutor {
                 return true;
             }
             case "leave" -> {
+                if (!(sender instanceof Player p)) {
+                    sender.sendMessage(ChatColor.RED + "Only players can use this command.");
+                    return false;
+                }
+
                 if (IsBattleGoingOn.loadData()) {
                     sender.sendMessage(ChatColor.RED + "You can't leave a team during a battle.");
                     return false;
@@ -101,7 +105,8 @@ public class BattleTeamCommand implements CommandExecutor {
             case "list" -> {
                 var obj = TeamConfigSerializer.loadData();
                 if (obj.biTeamToPlayers.size() == 0) {
-                    p.sendMessage(ChatColor.RED + "No teams are currently registered!");
+                    sender.sendMessage(ChatColor.RED + "No teams are currently registered!");
+                    return true;
                 }
                 StringBuilder sb = new StringBuilder();
 
@@ -115,7 +120,7 @@ public class BattleTeamCommand implements CommandExecutor {
                     }
                     sb.replace(sb.length() - 1, sb.length(), "\n");
                 }
-                p.sendMessage(sb.toString());
+                sender.sendMessage(sb.toString());
                 return true;
             }
             case "test" -> {
@@ -149,6 +154,7 @@ public class BattleTeamCommand implements CommandExecutor {
                 for (var op : onlineOps) {
                     op.sendMessage(message.toString());
                 }
+                Bukkit.getLogger().info(message.toString());
 
                 return true;
             }
