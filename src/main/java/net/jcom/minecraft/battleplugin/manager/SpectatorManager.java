@@ -21,12 +21,26 @@ public class SpectatorManager {
     }
 
     public static void start() {
+        int[] counter = {0};
         task = new BukkitRunnable() {
             @Override
             public void run() {
+                counter[0] = counter[0] + 1;
+                counter[0] = counter[0] % 30;
+
+
                 var obj = SpectateDataSerializer.loadData();
 
                 Bukkit.getScheduler().runTask(BattlePlugin.getPlugin(), () -> {
+
+                    if (counter[0] == 0) {
+                        for (var pl : Bukkit.getOnlinePlayers().stream()
+                                .filter(player -> player.getGameMode() == GameMode.SPECTATOR)
+                                .toList()) {
+                            pl.sendMessage("You can change your spectate target via /djspec <PlayerName>");
+                        }
+                    }
+
                     for (var entry : obj.spectatorToTarget.entrySet()) {
                         var specOff = entry.getKey();
                         var targOff = entry.getValue();

@@ -7,20 +7,14 @@ import net.jcom.minecraft.battleplugin.data.IsBattleGoingOn;
 import net.jcom.minecraft.battleplugin.data.SpectateDataSerializer;
 import net.jcom.minecraft.battleplugin.data.TeamConfigSerializer;
 import net.jcom.minecraft.battleplugin.manager.SpectatorManager;
-import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
-import org.bukkit.GameMode;
-import org.bukkit.OfflinePlayer;
+import org.bukkit.*;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.PlayerDeathEvent;
-import org.bukkit.event.player.PlayerAnimationEvent;
-import org.bukkit.event.player.PlayerQuitEvent;
-import org.bukkit.event.player.PlayerRespawnEvent;
-import org.bukkit.event.player.PlayerToggleSneakEvent;
+import org.bukkit.event.player.*;
 import org.bukkit.plugin.Plugin;
 import org.jetbrains.annotations.NotNull;
 
@@ -44,9 +38,24 @@ public class BattleHandler implements Listener {
         if (!IsBattleGoingOn.loadData()) {
             return;
         }
+
         var deathLocation = playerDeathEvent.getEntity().getLocation();
         DataUtils.setAndSave(battleData, playerDeathEvent.getEntity().getUniqueId() + ".location", deathLocation);
 
+        if (playerDeathEvent.getEntity().getGameMode() == GameMode.SPECTATOR) {
+            playerDeathEvent.setDeathMessage(null);
+            //Spectator mode is bugged when switching to spectator during respawn so noclip and spec menu is not present
+            //which is what we want so swapping here
+            playerDeathEvent.getEntity().setGameMode(GameMode.SURVIVAL);
+            return;
+        }
+
+        playerDeathEvent.setDeathMessage(ChatColor.AQUA + "A player has died.");
+        playerDeathEvent.getEntity().getWorld().strikeLightningEffect(deathLocation);
+        for (var player : Bukkit.getOnlinePlayers()) {
+            player.playSound(player.getLocation(), Sound.ENTITY_LIGHTNING_BOLT_THUNDER, SoundCategory.PLAYERS, 1.f,
+                    0.f);
+        }
 
         //Update spectators to another player alive
         var teamData = TeamConfigSerializer.loadData();
@@ -74,6 +83,9 @@ public class BattleHandler implements Listener {
             for (var spectator : teamMatesOfDyingMember) {
                 SpectateDataSerializer.removeTarget(spectator.getPlayer());
             }
+            Bukkit.getScheduler().scheduleSyncDelayedTask(BattlePlugin.getPlugin(), () -> {
+                Bukkit.broadcastMessage(ChatColor.AQUA + "Team \"" + team + "\" has been eliminated.");
+            }, 10);
         }
     }
 
@@ -142,6 +154,18 @@ public class BattleHandler implements Listener {
     public void onPlayerQuit(PlayerQuitEvent playerQuitEvent) {
         if (playerQuitEvent.getPlayer().getGameMode() == GameMode.SURVIVAL) {
             playerQuitEvent.getPlayer().setHealth(0);
+        }
+    }
+
+    @EventHandler
+    public void onPlayerJoin(PlayerJoinEvent playerJoinEvent) {
+        if (IsBattleGoingOn.loadData()) {
+            playerJoinEvent.getPlayer().getInventory().clear();
+            playerJoinEvent.getPlayer().setGameMode(GameMode.SPECTATOR);
+            playerJoinEvent.getPlayer().sendMessage("Battle is already going on, so you are in spectator mode.");
+            playerJoinEvent.getPlayer().setHealth(0);
+        } else {
+            playerJoinEvent.getPlayer().setGameMode(GameMode.ADVENTURE);
         }
     }
 

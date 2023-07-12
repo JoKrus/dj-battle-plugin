@@ -137,6 +137,9 @@ public class BattleCommand implements CommandExecutor {
                         "gamerule doTraderSpawning false",
                         "gamerule logAdminCommands false",
                         "gamerule commandBlockOutput false",
+                        "gamerule doWeatherCycle false",
+                        "gamerule doPatrolSpawning false",
+                        "gamerule disableRaids true",
                         "setworldspawn " + getConfig().getString(Defaults.LOBBY_LOCATION_KEY),
                         "worldborder center " + getXZLoc(getConfig().getString(Defaults.LOBBY_LOCATION_KEY)),
                         "worldborder set " + getConfig().getInt(Defaults.WORLD_BORDER_LOBBY_WIDTH_KEY) + " 0"

@@ -47,7 +47,7 @@ public class BattleSpectateCommand implements CommandExecutor {
             return false;
         }
         if (target.getGameMode() != GameMode.SURVIVAL) {
-            sender.sendMessage(ChatColor.RED + "Your target (\"" + target.getName() + "\" has to be in survival mode. " +
+            sender.sendMessage(ChatColor.RED + "Your target \"" + target.getName() + "\" has to be in survival mode. " +
                     "Currently in " + target.getGameMode() + ".");
             return false;
         }
