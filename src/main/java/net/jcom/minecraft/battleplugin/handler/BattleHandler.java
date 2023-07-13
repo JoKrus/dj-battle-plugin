@@ -75,9 +75,11 @@ public class BattleHandler implements Listener {
                 if (!SpectateDataSerializer.isSpectating(spectator.getPlayer(), playerDeathEvent.getEntity())) {
                     continue;
                 }
-                //when spectated the dead player, go to new player
-                SpectateDataSerializer.setTarget(spectator.getPlayer(), target);
-                SpectatorManager.tpAndSpectate(spectator.getPlayer(), target);
+                Bukkit.getScheduler().scheduleSyncDelayedTask(BattlePlugin.getPlugin(), () -> {
+                    //when spectated the dead player, go to new player
+                    SpectateDataSerializer.setTarget(spectator.getPlayer(), target);
+                    SpectatorManager.tpAndSpectate(spectator.getPlayer(), target);
+                }, 2);
             }
         } else {
             for (var spectator : teamMatesOfDyingMember) {

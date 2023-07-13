@@ -156,8 +156,9 @@ public class BattleCommand implements CommandExecutor {
                 }
 
                 Bukkit.broadcastMessage("Battle was stopped!");
-                Bukkit.broadcastMessage(ChatColor.AQUA + winner + " has won the battle! Congratulations!");
-
+                if (teamNames.size() == 1) {
+                    Bukkit.broadcastMessage(ChatColor.AQUA + winner + " has won the battle! Congratulations!");
+                }
                 SpectatorManager.stop();
                 SpectateDataSerializer.clear();
 
