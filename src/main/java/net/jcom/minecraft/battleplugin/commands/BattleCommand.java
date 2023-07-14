@@ -1,8 +1,9 @@
 package net.jcom.minecraft.battleplugin.commands;
 
 import net.jcom.minecraft.battleplugin.BattlePlugin;
-import net.jcom.minecraft.battleplugin.Defaults;
 import net.jcom.minecraft.battleplugin.apidata.TeamConfigWrapper;
+import net.jcom.minecraft.battleplugin.config.Defaults;
+import net.jcom.minecraft.battleplugin.config.DefaultsManager;
 import net.jcom.minecraft.battleplugin.data.IsBattleGoingOn;
 import net.jcom.minecraft.battleplugin.data.SpectateDataSerializer;
 import net.jcom.minecraft.battleplugin.data.TeamConfigSerializer;
@@ -49,8 +50,7 @@ public class BattleCommand implements CommandExecutor {
                 new BukkitRunnable() {
                     @Override
                     public void run() {
-                        countDownBattle(getConfig().getInt(Defaults.BATTLE_START_KEY));
-
+                        countDownBattle(DefaultsManager.getValue(Defaults.BATTLE_START));
                         List<String> cmds = List.of(
                                 "time set 0",
                                 "weather clear",
@@ -59,11 +59,11 @@ public class BattleCommand implements CommandExecutor {
                                 "difficulty normal",
                                 "give @a minecraft:bread 10",
                                 "experience set @a 0",
-                                "worldborder center " + getXZLoc(getConfig().getString(Defaults.BATTLE_LOCATION_KEY)),
-                                "worldborder set " + getConfig().getInt(Defaults.WORLD_BORDER_INIT_WIDTH_KEY) + " 0",
-                                "worldborder set " + getConfig().getInt(Defaults.WORLD_BORDER_END_WIDTH_KEY) + " " +
-                                        getConfig().getInt(Defaults.BATTLE_DURATION_KEY),
-                                "tp @a " + getConfig().getString(Defaults.BATTLE_LOCATION_KEY),
+                                "worldborder center " + getXZLoc(DefaultsManager.getValue(Defaults.BATTLE_LOCATION)),
+                                "worldborder set " + DefaultsManager.getValue(Defaults.WORLD_BORDER_INIT_WIDTH) + " 0",
+                                "worldborder set " + DefaultsManager.getValue(Defaults.WORLD_BORDER_END_WIDTH) + " " +
+                                        DefaultsManager.getValue(Defaults.BATTLE_DURATION),
+                                "tp @a " + DefaultsManager.getValue(Defaults.BATTLE_LOCATION),
                                 "gamemode survival @a"
                         );
 
@@ -97,7 +97,7 @@ public class BattleCommand implements CommandExecutor {
                             Bukkit.getPluginManager().callEvent(new BattleStartedEvent(config));
                         });
 
-                        countDownGrace(getConfig().getInt(Defaults.GRACE_PERIOD_KEY));
+                        countDownGrace(DefaultsManager.getValue(Defaults.GRACE_PERIOD));
 
                         HandlerList.unregisterAll(gracePeriod);
                     }
@@ -144,9 +144,9 @@ public class BattleCommand implements CommandExecutor {
                         "gamemode adventure @a",
                         "effect clear @a",
                         "clear @a",
-                        "worldborder center " + getXZLoc(getConfig().getString(Defaults.LOBBY_LOCATION_KEY)),
-                        "worldborder set " + getConfig().getInt(Defaults.WORLD_BORDER_LOBBY_WIDTH_KEY) + " 0",
-                        "tp @a " + getConfig().getString(Defaults.LOBBY_LOCATION_KEY)
+                        "worldborder center " + getXZLoc(DefaultsManager.getValue(Defaults.LOBBY_LOCATION)),
+                        "worldborder set " + DefaultsManager.getValue(Defaults.WORLD_BORDER_LOBBY_WIDTH) + " 0",
+                        "tp @a " + DefaultsManager.getValue(Defaults.LOBBY_LOCATION)
                 );
 
                 if (!wasTimer) {
@@ -176,9 +176,9 @@ public class BattleCommand implements CommandExecutor {
                         "gamerule doWeatherCycle false",
                         "gamerule doPatrolSpawning false",
                         "gamerule disableRaids true",
-                        "setworldspawn " + getConfig().getString(Defaults.LOBBY_LOCATION_KEY),
-                        "worldborder center " + getXZLoc(getConfig().getString(Defaults.LOBBY_LOCATION_KEY)),
-                        "worldborder set " + getConfig().getInt(Defaults.WORLD_BORDER_LOBBY_WIDTH_KEY) + " 0"
+                        "setworldspawn " + DefaultsManager.getValue(Defaults.LOBBY_LOCATION),
+                        "worldborder center " + getXZLoc(DefaultsManager.getValue(Defaults.LOBBY_LOCATION)),
+                        "worldborder set " + DefaultsManager.getValue(Defaults.WORLD_BORDER_LOBBY_WIDTH) + " 0"
                 );
 
                 for (var cmd : cmds) {

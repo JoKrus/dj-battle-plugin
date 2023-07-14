@@ -7,6 +7,8 @@ import net.jcom.minecraft.battleplugin.commands.BattleTeamCommand;
 import net.jcom.minecraft.battleplugin.commands.tab.BattleSpectateTabComplete;
 import net.jcom.minecraft.battleplugin.commands.tab.BattleTabComplete;
 import net.jcom.minecraft.battleplugin.commands.tab.BattleTeamTabComplete;
+import net.jcom.minecraft.battleplugin.config.Defaults;
+import net.jcom.minecraft.battleplugin.config.DefaultsManager;
 import net.jcom.minecraft.battleplugin.data.IsBattleGoingOn;
 import net.jcom.minecraft.battleplugin.data.SpectateDataSerializer;
 import net.jcom.minecraft.battleplugin.data.TeamConfigSerializer;
@@ -24,19 +26,7 @@ public final class BattlePlugin extends JavaPlugin {
     public void onEnable() {
         plugin = this;
 
-        getConfig().addDefault(Defaults.GRACE_PERIOD_KEY, Defaults.GRACE_PERIOD_VALUE);
-        getConfig().addDefault(Defaults.BATTLE_START_KEY, Defaults.BATTLE_START_VALUE);
-        getConfig().addDefault(Defaults.BATTLE_DURATION_KEY, Defaults.BATTLE_DURATION_VALUE);
-        getConfig().addDefault(Defaults.BATTLE_LOCATION_KEY, Defaults.BATTLE_LOCATION_VALUE);
-        getConfig().addDefault(Defaults.LOBBY_LOCATION_KEY, Defaults.LOBBY_LOCATION_VALUE);
-        getConfig().addDefault(Defaults.WORLD_BORDER_INIT_WIDTH_KEY, Defaults.WORLD_BORDER_INIT_WIDTH_VALUE);
-        getConfig().addDefault(Defaults.WORLD_BORDER_END_WIDTH_KEY, Defaults.WORLD_BORDER_END_WIDTH_VALUE);
-        getConfig().addDefault(Defaults.WORLD_BORDER_LOBBY_WIDTH_KEY, Defaults.WORLD_BORDER_LOBBY_WIDTH_VALUE);
-        getConfig().addDefault(Defaults.TEAM_SIZE_KEY, Defaults.TEAM_SIZE_VALUE);
-
-
-        getConfig().options().copyDefaults(true);
-        saveConfig();
+        DefaultsManager.init(this, Defaults.class);
 
         // Plugin startup logic
         Bukkit.getLogger().info("BattlePlugin - started!");
