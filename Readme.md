@@ -33,7 +33,7 @@ Configure the lobby location, spawn location, grace period, map size and map shr
 
 ### Setup
 
-- Use `/djbattle init` and `/djbattle reload` to apply your config to the server and setup the environment
+- Use `/djbattle init` and `/djbattle reload` to apply your config to the server and set up the environment
 - Let every player setup their teams via `/djteam join`
 - Test if every player is in a team via `/djteam test`
 

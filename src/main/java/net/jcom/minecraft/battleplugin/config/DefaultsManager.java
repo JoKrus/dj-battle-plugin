@@ -68,11 +68,11 @@ public class DefaultsManager {
     }
 
 
-    private static final String getKey(Pair<String, Object> varName) {
+    private static String getKey(Pair<String, Object> varName) {
         return varName.getLeft();
     }
 
-    public static final <T> T getValue(Pair<String, Object> varName) {
+    public static <T> T getValue(Pair<String, Object> varName) {
         var key = getKey(varName);
         return (T) myPlugin.getConfig().get(key);
     }
