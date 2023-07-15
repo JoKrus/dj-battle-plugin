@@ -10,6 +10,7 @@ import net.jcom.minecraft.battleplugin.manager.SpectatorManager;
 import org.bukkit.*;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
+import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
@@ -166,7 +167,8 @@ public class BattleHandler implements Listener {
             playerJoinEvent.getPlayer().setGameMode(GameMode.SPECTATOR);
             playerJoinEvent.getPlayer().sendMessage("Battle is already going on, so you are in spectator mode.");
             playerJoinEvent.getPlayer().setHealth(0);
-        } else {
+        } else if (isOutsideBorder(playerJoinEvent.getPlayer())) {
+            playerJoinEvent.getPlayer().setHealth(0);
             playerJoinEvent.getPlayer().setGameMode(GameMode.ADVENTURE);
         }
     }
@@ -201,5 +203,19 @@ public class BattleHandler implements Listener {
                 return false;
             }).toList();
         }
+    }
+
+
+    private static boolean isInsideBorder(Player player) {
+        return !isOutsideBorder(player);
+    }
+
+    //https://www.spigotmc.org/threads/check-if-a-player-is-outside-border.176990/
+    private static boolean isOutsideBorder(Player player) {
+        WorldBorder border = player.getWorld().getWorldBorder();
+        double radius = border.getSize() / 2;
+        Location location = player.getLocation(), center = border.getCenter();
+
+        return center.distanceSquared(location) >= (radius * radius);
     }
 }
