@@ -39,9 +39,7 @@ public class BattleTeamCommand implements CommandExecutor {
                     sender.sendMessage(ChatColor.RED + "Missing argument.");
                     return false;
                 }
-                var arrList = new ArrayList<>(Arrays.stream(args).toList());
-                arrList.remove(0);
-                String teamName = StringUtils.join(arrList, " ");
+                String teamName = getTeamName(args);
 
                 var success = TeamConfigSerializer.addEntry(teamName, p);
 
@@ -124,6 +122,11 @@ public class BattleTeamCommand implements CommandExecutor {
                 return true;
             }
             case "test" -> {
+                if (!sender.hasPermission("battle-plugin.team.test")) {
+                    sender.sendMessage(ChatColor.RED + "You don't have permission to run this subcommand!");
+                    return false;
+                }
+
                 var onlinePlayers = Bukkit.getOnlinePlayers();
                 var teamData = TeamConfigSerializer.loadData();
                 var playerMap = TeamConfigWrapper.getPlayerToTeamMap(teamData);
@@ -158,9 +161,51 @@ public class BattleTeamCommand implements CommandExecutor {
 
                 return true;
             }
+            case "remove" -> {
+                if (!sender.hasPermission("battle-plugin.team.remove")) {
+                    sender.sendMessage(ChatColor.RED + "You don't have permission to run this subcommand!");
+                    return false;
+                }
+
+                if (IsBattleGoingOn.loadData()) {
+                    sender.sendMessage(ChatColor.RED + "You can't remove a team during a battle.");
+                    return false;
+                }
+                if (args.length == 1) {
+                    sender.sendMessage(ChatColor.RED + "Missing argument.");
+                    return false;
+                }
+                String teamName = getTeamName(args);
+
+                var tData = TeamConfigSerializer.loadData();
+
+                var exists = tData.biTeamToPlayers.containsKey(teamName);
+                var teamPlayers = tData.biTeamToPlayers.get(teamName);
+                if (!exists || teamPlayers == null) {
+                    sender.sendMessage(ChatColor.RED + "This team does not exist.");
+                    return false;
+                }
+
+                for (var pl : teamPlayers) {
+                    TeamConfigSerializer.removeEntry(pl);
+                }
+
+                for (var playersInTeam : teamPlayers) {
+                    if (playersInTeam.getPlayer() != null) {
+                        playersInTeam.getPlayer().sendMessage("Your team was removed by an admin!");
+                    }
+                }
+                return true;
+            }
             default -> {
                 return false;
             }
         }
+    }
+
+    private static String getTeamName(String[] args) {
+        var arrList = new ArrayList<>(Arrays.stream(args).toList());
+        arrList.remove(0);
+        return StringUtils.join(arrList, " ");
     }
 }

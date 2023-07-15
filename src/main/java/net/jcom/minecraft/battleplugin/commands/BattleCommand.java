@@ -9,6 +9,7 @@ import net.jcom.minecraft.battleplugin.data.SpectateDataSerializer;
 import net.jcom.minecraft.battleplugin.data.TeamConfigSerializer;
 import net.jcom.minecraft.battleplugin.handler.GracePeriodHandler;
 import net.jcom.minecraft.battleplugin.manager.SpectatorManager;
+import net.jcom.minecraft.battleplugineventapi.data.BattleData;
 import net.jcom.minecraft.battleplugineventapi.event.BattleStartedEvent;
 import net.jcom.minecraft.battleplugineventapi.event.BattleStoppedEvent;
 import org.apache.commons.lang3.tuple.Pair;
@@ -27,6 +28,7 @@ import org.jetbrains.annotations.NotNull;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.UUID;
 
 public class BattleCommand implements CommandExecutor {
     @Override
@@ -41,6 +43,20 @@ public class BattleCommand implements CommandExecutor {
                 if (IsBattleGoingOn.loadData()) {
                     sender.sendMessage(ChatColor.RED + "Battle already going on.");
                     return false;
+                }
+
+                String name;
+                String category;
+
+                if (!(args.length == 1 || args.length == 3)) {
+                    sender.sendMessage(ChatColor.RED + "Not the correct number of arguments.");
+                    return false;
+                } else if (args.length == 3) {
+                    name = args[1];
+                    category = args[2];
+                } else {
+                    name = "DJ-Classic " + UUID.randomUUID();
+                    category = "classic";
                 }
                 IsBattleGoingOn.saveData(true, true);
 
@@ -92,9 +108,11 @@ public class BattleCommand implements CommandExecutor {
 
                         var gracePeriod = new GracePeriodHandler(BattlePlugin.getPlugin());
 
+
                         Bukkit.getScheduler().runTask(BattlePlugin.getPlugin(), () -> {
                             var config = TeamConfigWrapper.toTeamConfig(TeamConfigSerializer.loadData());
-                            Bukkit.getPluginManager().callEvent(new BattleStartedEvent(config));
+                            var battleData = getBattleData(name, category);
+                            Bukkit.getPluginManager().callEvent(new BattleStartedEvent(config, battleData));
                         });
 
                         countDownGrace(DefaultsManager.getValue(Defaults.GRACE_PERIOD));
@@ -108,6 +126,23 @@ public class BattleCommand implements CommandExecutor {
                     sender.sendMessage(ChatColor.RED + "No battle present right now.");
                     return false;
                 }
+
+                String cancelledStr;
+
+                if (!(args.length == 1 || args.length == 2)) {
+                    sender.sendMessage(ChatColor.RED + "Not the correct number of arguments.");
+                    return false;
+                } else if (args.length == 2) {
+                    cancelledStr = args[1];
+                    if (!List.of("true", "false").contains(cancelledStr)) {
+                        sender.sendMessage(ChatColor.RED + "Boolean (true/false) required to set cancellation status.");
+                        return false;
+                    }
+                } else {
+                    cancelledStr = "false";
+                }
+
+                var cancelledBattle = Boolean.parseBoolean(cancelledStr);
 
                 boolean wasTimer = IsBattleGoingOn.loadDataWithTimer().isTimer.get();
                 IsBattleGoingOn.saveData(false, false);
@@ -130,12 +165,12 @@ public class BattleCommand implements CommandExecutor {
                     teamNames.add(team);
                 }
 
-                var battleStoppedEvent = new BattleStoppedEvent();
+                var battleStoppedEvent = new BattleStoppedEvent(null, cancelledBattle);
 
                 var winner = "";
                 if (teamNames.size() == 1) {
                     winner = teamNames.stream().findFirst().orElse(null);
-                    battleStoppedEvent = new BattleStoppedEvent(winner);
+                    battleStoppedEvent = new BattleStoppedEvent(winner, cancelledBattle);
                 }
 
                 List<String> cmds = List.of(
@@ -156,7 +191,7 @@ public class BattleCommand implements CommandExecutor {
                 }
 
                 Bukkit.broadcastMessage("Battle was stopped!");
-                if (teamNames.size() == 1) {
+                if (!cancelledBattle && teamNames.size() == 1) {
                     Bukkit.broadcastMessage(ChatColor.AQUA + winner + " has won the battle! Congratulations!");
                 }
                 SpectatorManager.stop();
@@ -194,6 +229,16 @@ public class BattleCommand implements CommandExecutor {
         }
 
         return true;
+    }
+
+    private BattleData getBattleData(String name, String category) {
+        return new BattleData(name,
+                category,
+                DefaultsManager.getValue(Defaults.BATTLE_DURATION),
+                DefaultsManager.getValue(Defaults.WORLD_BORDER_INIT_WIDTH),
+                DefaultsManager.getValue(Defaults.WORLD_BORDER_END_WIDTH),
+                DefaultsManager.getValue(Defaults.TEAM_SIZE)
+        );
     }
 
     private static void correctTeamData() {

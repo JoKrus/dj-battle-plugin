@@ -5,19 +5,19 @@ api-version: '1.20'
 load: STARTUP
 commands:
   djbattle:
-    usage: /<command> [start | stop | init | reload]
+    usage: /<command> [start 'name' 'category' | stop | init | reload]
     aliases: [ ]
     description: Battle Management-Command
     permission: battle-plugin.battle
 
   djteam:
-    usage: /<command> [join teamName | leave | list | test]
+    usage: /<command> [join 'teamName' | leave | list | test | remove 'teamName']
     aliases: [ ]
     description: Battle Team-Command
     permission: battle-plugin.team
 
   djspec:
-    usage: /<command> playerName
+    usage: /<command> 'playerName'
     aliases: [ djspectate ]
     description: Battle Spectator-Command
     permission: battle-plugin.spectate
@@ -71,6 +71,7 @@ permissions:
       leave: true
       list: true
       test: false
+      remove: false
 
   battle-plugin.team.join:
     default: true
@@ -87,6 +88,10 @@ permissions:
   battle-plugin.team.test:
     default: op
     description: Permission to test if every online player is in a team | Permission
+
+  battle-plugin.team.remove:
+    default: op
+    description: Permission to remove a whole team | Permission
 
   battle-plugin.spectate:
     default: true

@@ -15,13 +15,14 @@ public class BattleApiHandler implements Listener {
 
     @EventHandler
     public void onBattleStart(BattleStartedEvent event) {
-        Bukkit.getLogger().info("BattleStartedEvent received");
+        Bukkit.getLogger().info("BattleStartedEvent received! \nBattleConfig: " +
+                event.getTeamConfig().teamToPlayers.toString() + "\nBattleData: " + event.getBattleData());
     }
 
     @EventHandler
     public void onBattleStop(BattleStoppedEvent event) {
-        Bukkit.getLogger().info("BattleStoppedEvent received");
-        if (event.hasWinner()) {
+        Bukkit.getLogger().info("BattleStoppedEvent received! \nCancelled: " + event.isBattleCancelled());
+        if (!event.isBattleCancelled() && event.hasWinner()) {
             Bukkit.getLogger().info(event.getWinnerTeam() + " won!");
         }
     }

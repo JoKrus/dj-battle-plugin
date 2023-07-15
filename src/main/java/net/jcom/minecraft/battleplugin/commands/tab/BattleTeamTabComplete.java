@@ -40,6 +40,10 @@ public class BattleTeamTabComplete implements TabCompleter {
                     complete.add("test");
                 }
 
+                if (player.hasPermission("battle-plugin.team.remove")) {
+                    complete.add("remove");
+                }
+
                 if (!args[args.length - 1].isEmpty()) {
                     for (String entry : complete) {
                         if (entry.toLowerCase().startsWith(args[args.length - 1].toLowerCase())) {
@@ -52,24 +56,10 @@ public class BattleTeamTabComplete implements TabCompleter {
                 switch (args[0]) {
                     case "join": {
                         //Get all teamnames
-                        complete.addAll(TeamConfigSerializer.loadData().biTeamToPlayers.keySet());
-                        complete.sort(String::compareToIgnoreCase);
-
-                        var arrList = new ArrayList<>(Arrays.stream(args).toList());
-                        arrList.remove(0);
-                        String myArgTilNow = StringUtils.join(arrList, " ");
-
-                        //update since space is okay
-                        if (!myArgTilNow.isEmpty()) {
-                            for (String entry : complete) {
-                                if (entry.startsWith(myArgTilNow)) {
-                                    completeStarted.add(entry);
-                                }
-                            }
-                            complete.clear();
-                        }
+                        teamMateAdding(args, complete, completeStarted);
                     }
-                    case "leave": {
+                    case "remove": {
+                        teamMateAdding(args, complete, completeStarted);
                     }
                     default: {
                     }
@@ -78,5 +68,25 @@ public class BattleTeamTabComplete implements TabCompleter {
         }
 
         return complete.isEmpty() ? completeStarted : complete;
+    }
+
+    private static void teamMateAdding(String[] args, List<String> complete, List<String> completeStarted) {
+        //Get all teamnames
+        complete.addAll(TeamConfigSerializer.loadData().biTeamToPlayers.keySet());
+        complete.sort(String::compareToIgnoreCase);
+
+        var arrList = new ArrayList<>(Arrays.stream(args).toList());
+        arrList.remove(0);
+        String myArgTilNow = StringUtils.join(arrList, " ");
+
+        //update since space is okay
+        if (!myArgTilNow.isEmpty()) {
+            for (String entry : complete) {
+                if (entry.startsWith(myArgTilNow)) {
+                    completeStarted.add(entry);
+                }
+            }
+            complete.clear();
+        }
     }
 }
