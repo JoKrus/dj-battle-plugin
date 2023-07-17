@@ -16,6 +16,7 @@ import org.apache.commons.lang3.tuple.Pair;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.GameMode;
+import org.bukkit.Location;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
@@ -238,8 +239,13 @@ public class BattleCommand implements CommandExecutor {
     }
 
     private BattleData getBattleData(String name, String category) {
+        var strLoc = DefaultsManager.<String>getValue(Defaults.BATTLE_LOCATION);
+        var locArr = Arrays.stream(strLoc.split(" +")).mapToInt(Integer::parseInt).toArray();
+        var loc = new Location(Bukkit.getWorld(BattlePlugin.getWorldName()), locArr[0], locArr[1], locArr[2]);
+
         return new BattleData(name,
                 category,
+                loc,
                 DefaultsManager.getValue(Defaults.BATTLE_DURATION),
                 DefaultsManager.getValue(Defaults.WORLD_BORDER_INIT_WIDTH),
                 DefaultsManager.getValue(Defaults.WORLD_BORDER_END_WIDTH),

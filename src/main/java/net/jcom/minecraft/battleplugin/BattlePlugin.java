@@ -17,6 +17,11 @@ import net.jcom.minecraft.battleplugin.manager.SpectatorManager;
 import org.bukkit.Bukkit;
 import org.bukkit.plugin.java.JavaPlugin;
 
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Paths;
+import java.util.Properties;
+
 public final class BattlePlugin extends JavaPlugin {
 
     private static BattlePlugin plugin;
@@ -68,5 +73,22 @@ public final class BattlePlugin extends JavaPlugin {
 
     public static BattlePlugin getPlugin() {
         return plugin;
+    }
+
+    public static String getWorldName() {
+        Properties serverProperties = new Properties();
+        String mainWorldName;
+        try {
+            serverProperties.load(Files.newInputStream(Paths.get("server.properties")));
+            mainWorldName = serverProperties.getProperty("level-name");
+            if (mainWorldName == null) {
+                Bukkit.getLogger().severe("server.properties file is missing or broken. Continuing may result in undefined behaviour.");
+                mainWorldName = "world";
+            }
+        } catch (IOException e) {
+            Bukkit.getLogger().severe("server.properties file is missing or broken. Continuing may result in undefined behaviour.");
+            throw new RuntimeException(e);
+        }
+        return mainWorldName;
     }
 }
