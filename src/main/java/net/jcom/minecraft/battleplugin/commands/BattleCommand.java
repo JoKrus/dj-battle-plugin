@@ -25,10 +25,7 @@ import org.bukkit.event.HandlerList;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
-import java.util.UUID;
+import java.util.*;
 
 public class BattleCommand implements CommandExecutor {
     @Override
@@ -200,21 +197,30 @@ public class BattleCommand implements CommandExecutor {
                 Bukkit.getPluginManager().callEvent(battleStoppedEvent);
             }
             case "init" -> {
-                List<String> cmds = List.of(
+                List<String> alwaysCmds = List.of(
                         "gamerule sendCommandFeedback true",
                         "defaultgamemode adventure",
-                        "difficulty peaceful",
                         "gamerule doInsomnia false",
                         "gamerule doTraderSpawning false",
                         "gamerule logAdminCommands false",
                         "gamerule commandBlockOutput false",
                         "gamerule doWeatherCycle false",
                         "gamerule doPatrolSpawning false",
-                        "gamerule disableRaids true",
+                        "gamerule disableRaids true"
+                );
+
+                List<String> noBattleCmds = List.of(
+                        "difficulty peaceful",
                         "setworldspawn " + DefaultsManager.getValue(Defaults.LOBBY_LOCATION),
                         "worldborder center " + getXZLoc(DefaultsManager.getValue(Defaults.LOBBY_LOCATION)),
                         "worldborder set " + DefaultsManager.getValue(Defaults.WORLD_BORDER_LOBBY_WIDTH) + " 0"
                 );
+
+                ArrayList<String> cmds = new ArrayList<>(alwaysCmds);
+
+                if (!IsBattleGoingOn.loadData()) {
+                    cmds.addAll(noBattleCmds);
+                }
 
                 for (var cmd : cmds) {
                     Bukkit.getServer().dispatchCommand(Bukkit.getConsoleSender(), cmd);

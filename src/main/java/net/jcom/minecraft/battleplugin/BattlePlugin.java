@@ -52,6 +52,12 @@ public final class BattlePlugin extends JavaPlugin {
         new BattleHandler(this);
         new ChatHandler(this);
         new BattleApiHandler(this);
+
+        Bukkit.getScheduler().runTaskLater(this, () -> {
+            var console = Bukkit.getServer().getConsoleSender();
+            String command = "djbattle init";
+            Bukkit.dispatchCommand(console, command);
+        }, 1);
     }
 
     @Override

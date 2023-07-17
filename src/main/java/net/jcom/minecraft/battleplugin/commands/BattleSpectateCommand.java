@@ -43,7 +43,7 @@ public class BattleSpectateCommand implements CommandExecutor {
         var target = Bukkit.getPlayer(playerName);
 
         if (target == null) {
-            sender.sendMessage(ChatColor.RED + "Target (\"" + playerName + "\" could not be found.");
+            sender.sendMessage(ChatColor.RED + "Target \"" + playerName + "\" could not be found.");
             return false;
         }
         if (target.getGameMode() != GameMode.SURVIVAL) {
