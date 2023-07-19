@@ -42,6 +42,8 @@ public final class BattlePlugin extends JavaPlugin {
 
         SpectatorManager.init();
 
+
+        //TODO Revise Subcommands
         getCommand("djbattle").setExecutor(new BattleCommand());
         getCommand("djbattle").setTabCompleter(new BattleTabComplete());
 

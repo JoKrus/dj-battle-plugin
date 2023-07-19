@@ -50,7 +50,7 @@ public class BattleTabComplete implements TabCompleter {
             }
         } else if (args.length == 2) {
             switch (args[0]) {
-                case "stop": {
+                case "stop" -> {
                     //Get all teamnames
                     complete.addAll(List.of("true", "false"));
 
@@ -63,20 +63,18 @@ public class BattleTabComplete implements TabCompleter {
                         complete.clear();
                     }
                 }
-                case "start": {
+                case "start" -> {
                     complete.add("name");
                 }
-                default: {
+                default -> {
                 }
             }
         } else if (args.length == 3) {
             switch (args[0]) {
-                case "start": {
+                case "start" -> {
                     complete.add("category");
                 }
-                case "stop": {
-                }
-                default: {
+                default -> {
                 }
             }
         }
