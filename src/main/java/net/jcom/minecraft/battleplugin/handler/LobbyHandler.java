@@ -13,6 +13,8 @@ import org.bukkit.event.player.PlayerUnleashEntityEvent;
 import org.bukkit.plugin.Plugin;
 import org.spigotmc.event.entity.EntityMountEvent;
 
+import java.util.List;
+
 public class LobbyHandler implements Listener {
 
     public LobbyHandler(Plugin plugin) {
@@ -45,7 +47,17 @@ public class LobbyHandler implements Listener {
 
     @EventHandler
     public void onHorseMount(EntityMountEvent entityMountEvent) {
-        if (!(entityMountEvent.getMount() instanceof Player p)) {
+        List<Entity> possPlayers = List.of(entityMountEvent.getMount(), entityMountEvent.getEntity());
+
+        // SPIGOT FOR SOME REASON HAS THIS SHIT SWAPPED SOMETIMES
+        Player p = null;
+        for (var ent : possPlayers) {
+            if (ent instanceof Player player) {
+                p = player;
+                break;
+            }
+        }
+        if (p == null) {
             return;
         }
 
